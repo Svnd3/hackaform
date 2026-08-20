@@ -310,7 +310,10 @@
 .home-hero h1 em {
   position: relative;
   color: var(--acid);
+  font-family: var(--accent);
+  font-weight: 700;
   font-style: normal;
+  letter-spacing: -0.055em;
 }
 
 .home-hero h1 em::after {
@@ -528,10 +531,10 @@
   position: relative;
   z-index: 2;
   margin: 0;
-  font-family: var(--display);
-  font-size: 2.55rem;
-  font-weight: 800;
-  letter-spacing: -0.06em;
+  font-family: var(--accent);
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: -0.045em;
   line-height: 1.05;
 }
 
@@ -594,7 +597,9 @@
   background: var(--pink);
   border: 2px solid var(--ink);
   box-shadow: 4px 4px 0 var(--ink);
+  font-family: var(--accent);
   font-size: 0.8rem;
+  font-weight: 700;
   line-height: 1.05;
   transform: rotate(-9deg);
 }
@@ -922,9 +927,10 @@
   position: relative;
   z-index: 2;
   max-width: 85%;
-  font-family: var(--display);
+  font-family: var(--accent);
   font-size: 1.65rem;
-  letter-spacing: -0.05em;
+  font-weight: 700;
+  letter-spacing: -0.035em;
   line-height: 1;
 }
 
@@ -1769,9 +1775,9 @@
   color: var(--ink);
   background: var(--orange);
   border-block: 2px solid var(--ink);
-  font-family: var(--display);
+  font-family: var(--accent);
   font-size: clamp(1.2rem, 2.2vw, 2rem);
-  font-weight: 800;
+  font-weight: 700;
   white-space: nowrap;
   animation: marquee-scroll 22s linear infinite;
 }
@@ -1814,8 +1820,8 @@
 .roadmap__item p { max-width: 620px; margin: 0; color: var(--muted); font-size: 0.83rem; line-height: 1.65; }
 
 /* 404 */
-.not-found-page { position: relative; display: flex; min-height: 720px; align-items: center; justify-content: center; flex-direction: column; padding-block: 100px; text-align: center; }
-.not-found__number { position: absolute; z-index: -1; color: #e3ded4; font-family: var(--display); font-size: min(38vw, 440px); font-weight: 800; letter-spacing: -0.11em; line-height: 1; }
+.not-found-page { position: relative; isolation: isolate; display: flex; min-height: 720px; align-items: center; justify-content: center; flex-direction: column; padding-block: 100px; text-align: center; }
+.not-found__number { position: absolute; z-index: -1; color: #e3ded4; font-family: var(--accent); font-size: min(38vw, 440px); font-weight: 700; letter-spacing: -0.08em; line-height: 1; }
 .not-found__compass { display: grid; width: 95px; height: 95px; place-items: center; margin-bottom: 25px; background: var(--acid); border: 2px solid var(--ink); border-radius: 50%; box-shadow: 6px 6px 0 var(--ink); transform: rotate(-12deg); }
 .not-found-page h1 { max-width: 760px; margin-bottom: 16px; font-size: clamp(2.4rem, 5vw, 5rem); line-height: 1; }
 .not-found-page > p:not(.eyebrow) { max-width: 580px; margin-bottom: 28px; color: var(--muted); line-height: 1.7; }
