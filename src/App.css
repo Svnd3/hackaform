@@ -54,10 +54,10 @@
 }
 
 .brand__word {
-  font-family: var(--display);
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.06em;
+  font-family: var(--accent);
+  font-size: 1.22rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
 }
 
 .desktop-nav {
@@ -303,17 +303,17 @@
 .home-hero h1 {
   max-width: 800px;
   margin: 29px 0 25px;
+  font-family: var(--accent);
   font-size: clamp(3.3rem, 6.4vw, 6.75rem);
-  line-height: 0.97;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
 }
 
 .home-hero h1 em {
   position: relative;
   color: var(--acid);
-  font-family: var(--accent);
-  font-weight: 700;
   font-style: normal;
-  letter-spacing: -0.055em;
 }
 
 .home-hero h1 em::after {
