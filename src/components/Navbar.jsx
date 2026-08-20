@@ -5,6 +5,7 @@ import { useSavedEvents } from '../hooks/useSavedEvents.js'
 import Brand from './Brand.jsx'
 
 const navigation = [
+  { label: 'Home', to: '/' },
   { label: 'Explore', to: '/events' },
   { label: 'Saved', to: '/saved' },
   { label: 'About', to: '/about' },

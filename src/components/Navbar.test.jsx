@@ -16,6 +16,18 @@ function renderNavbar() {
 }
 
 describe('Navbar', () => {
+  it('links to Home from the desktop and mobile navigation', async () => {
+    const user = userEvent.setup()
+    renderNavbar()
+
+    const desktopNavigation = screen.getByRole('navigation', { name: 'Main navigation' })
+    expect(within(desktopNavigation).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/')
+
+    await user.click(screen.getByRole('button', { name: /open navigation menu/i }))
+    const mobileNavigation = screen.getByRole('navigation', { name: 'Mobile navigation' })
+    expect(within(mobileNavigation).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/')
+  })
+
   it('keeps closed mobile links out of the document', () => {
     renderNavbar()
 
