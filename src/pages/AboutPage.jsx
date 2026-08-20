@@ -7,11 +7,11 @@ export default function AboutPage() {
       <header className="about-hero">
         <div className="container about-hero__grid">
           <div>
-            <p className="eyebrow">Why Tukio exists</p>
+            <p className="eyebrow">Why Hackaform exists</p>
             <h1>Life gets better when we leave the group chat.</h1>
           </div>
           <div className="about-hero__copy">
-            <p>Great opportunities are scattered across too many pages. Tukio brings them into one calm, useful place so students, builders and curious people can spend less time searching and more time participating.</p>
+            <p>Great opportunities are scattered across too many pages. Hackaform brings them into one calm, useful place so students, builders and curious people can spend less time searching and more time participating.</p>
             <Link className="button button--acid button--large" to="/events">See what’s happening <ArrowRight size={18} /></Link>
           </div>
         </div>
@@ -41,7 +41,7 @@ export default function AboutPage() {
             <Database size={30} aria-hidden="true" />
             <p className="eyebrow">Live public data</p>
             <h2>Fresh events, not a frozen demo.</h2>
-            <p>Tukio dynamically combines published events from the open Eventyay, WordPress Events and Codeforces APIs, then safely normalizes them into one useful catalogue.</p>
+            <p>Hackaform dynamically combines published events from the open Eventyay, WordPress Events and Codeforces APIs, then safely normalizes them into one useful catalogue.</p>
             <a href="https://github.com/Svnd3/hackaform#data-sources" rel="noreferrer" target="_blank">Explore the data sources <ArrowRight size={16} /></a>
           </div>
           <div className="about-principles">

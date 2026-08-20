@@ -35,10 +35,10 @@ export default function AppLayout() {
 }
 
 function titleForPath(pathname) {
-  if (pathname === '/') return 'Tukio — Discover your next event'
-  if (pathname === '/events') return 'Explore events — Tukio'
-  if (pathname === '/saved') return 'Saved events — Tukio'
-  if (pathname === '/about') return 'About — Tukio'
-  if (pathname.startsWith('/events/')) return 'Event details — Tukio'
-  return 'Page not found — Tukio'
+  if (pathname === '/') return 'Hackaform — Discover your next event'
+  if (pathname === '/events') return 'Explore events — Hackaform'
+  if (pathname === '/saved') return 'Saved events — Hackaform'
+  if (pathname === '/about') return 'About — Hackaform'
+  if (pathname.startsWith('/events/')) return 'Event details — Hackaform'
+  return 'Page not found — Hackaform'
 }

@@ -1,8 +1,8 @@
-# Tukio presentation outline
+# Hackaform presentation outline
 
 This outline is designed for a 5–10 minute showcase. Use one section per slide and demonstrate the live application after slide 4.
 
-## Slide 1 — Tukio: find something worth showing up for
+## Slide 1 — Hackaform: find something worth showing up for
 
 **On the slide**
 
@@ -12,7 +12,7 @@ This outline is designed for a 5–10 minute showcase. Use one section per slide
 
 **Speaker notes (about 45 seconds)**
 
-Tukio is a Swahili word for an event or occurrence. I built it because useful workshops, meetups, hackathons, and community events are spread across many websites. The product gives users one calm, engaging place to discover what is happening and decide what is worth their time.
+Hackaform brings the energy of hackathons into a broader event-discovery product. I built it because useful workshops, meetups, hackathons, and community events are spread across many websites. The product gives users one calm, engaging place to discover what is happening and decide what is worth their time.
 
 ## Slide 2 — The user problem
 
@@ -25,7 +25,7 @@ Tukio is a Swahili word for an event or occurrence. I built it because useful wo
 
 **Speaker notes (about 60 seconds)**
 
-The primary user is a student or early-career professional who wants to learn, build a network, or join a community. They expect fast search, useful filters, clear date and location information, and an obvious next action. Tukio reduces the work between “I want to do something useful” and “I found an event I can attend.”
+The primary user is a student or early-career professional who wants to learn, build a network, or join a community. They expect fast search, useful filters, clear date and location information, and an obvious next action. Hackaform reduces the work between “I want to do something useful” and “I found an event I can attend.”
 
 ## Slide 3 — Product and design
 
@@ -82,4 +82,4 @@ The biggest lesson was that API selection is a product and engineering decision,
 
 ## Suggested closing
 
-Tukio already solves the discovery problem as a complete front-end product, but its structure leaves a clear path from public information to a genuine two-sided event and booking platform.
+Hackaform already solves the discovery problem as a complete front-end product, but its structure leaves a clear path from public information to a genuine two-sided event and booking platform.

@@ -38,7 +38,7 @@ export default function HomePage() {
                 Explore what’s on <ArrowRight size={19} aria-hidden="true" />
               </Link>
               <Link className="button button--ghost button--large" to="/about">
-                How Tukio works
+                How Hackaform works
               </Link>
             </div>
             <div className="home-hero__proof">

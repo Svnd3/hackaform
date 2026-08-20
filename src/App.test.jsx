@@ -20,13 +20,13 @@ describe('application routes', () => {
     expect(
       screen.getByRole('heading', { name: /life gets better when we leave the group chat/i }),
     ).toBeInTheDocument()
-    expect(document.title).toBe('About — Tukio')
+    expect(document.title).toBe('About — Hackaform')
   })
 
   it('renders a useful not-found view for unknown routes', () => {
     renderAt('/definitely-not-a-page')
     expect(screen.getByRole('heading', { name: /event trail goes nowhere/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /take me home/i })).toHaveAttribute('href', '/')
-    expect(document.title).toBe('Page not found — Tukio')
+    expect(document.title).toBe('Page not found — Hackaform')
   })
 })

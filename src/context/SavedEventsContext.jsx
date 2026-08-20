@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { SavedEventsContext } from './savedEventsContext.js'
 
-const STORAGE_KEY = 'tukio:saved-events'
+const STORAGE_KEY = 'hackaform:saved-events'
 function readSavedEvents() {
   if (typeof window === 'undefined') return []
 

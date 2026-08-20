@@ -23,7 +23,7 @@ export default function Footer() {
           </div>
           <div>
             <p className="footer-label">Project</p>
-            <Link to="/about">About Tukio</Link>
+            <Link to="/about">About Hackaform</Link>
             <a href="https://github.com/Svnd3/hackaform" rel="noreferrer" target="_blank">
               GitHub <ArrowUpRight size={14} aria-hidden="true" />
             </a>
@@ -35,7 +35,7 @@ export default function Footer() {
       </div>
 
       <div className="container footer-bottom">
-        <p>© {new Date().getFullYear()} Tukio. Built for curious people.</p>
+        <p>© {new Date().getFullYear()} Hackaform. Built for curious people.</p>
         <p className="footer-made">
           Made with <Heart size={14} fill="currentColor" aria-label="care" /> in Nairobi
         </p>

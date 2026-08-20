@@ -46,10 +46,10 @@ describe('EventCard', () => {
 
     await user.click(saveButton)
     expect(saveButton).toHaveAttribute('aria-pressed', 'true')
-    expect(JSON.parse(window.localStorage.getItem('tukio:saved-events'))).toHaveLength(1)
+    expect(JSON.parse(window.localStorage.getItem('hackaform:saved-events'))).toHaveLength(1)
 
     await user.click(saveButton)
     expect(saveButton).toHaveAttribute('aria-pressed', 'false')
-    expect(JSON.parse(window.localStorage.getItem('tukio:saved-events'))).toHaveLength(0)
+    expect(JSON.parse(window.localStorage.getItem('hackaform:saved-events'))).toHaveLength(0)
   })
 })

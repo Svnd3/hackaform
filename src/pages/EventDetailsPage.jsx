@@ -56,7 +56,7 @@ export default function EventDetailsPage() {
   }, [cachedEvent, eventId, requestToken])
 
   useEffect(() => {
-    if (event?.name) document.title = `${event.name} — Tukio`
+    if (event?.name) document.title = `${event.name} — Hackaform`
   }, [event?.name])
 
   const relatedEvents = catalog.events

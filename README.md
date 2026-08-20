@@ -1,16 +1,14 @@
-# Tukio — Event Discovery
+# Hackaform — Event Discovery
 
 [![CI](https://github.com/Svnd3/hackaform/actions/workflows/ci.yml/badge.svg)](https://github.com/Svnd3/hackaform/actions/workflows/ci.yml)
 
-Tukio is a polished React application that helps students, developers, and curious people find worthwhile events without checking several disconnected websites. It combines live public event data into one searchable catalogue, lets visitors save a shortlist in their browser, and sends them to the official organizer when they are ready to register.
-
-> **Tukio** means “event” or “occurrence” in Swahili.
+Hackaform is a polished React application that helps students, developers, and curious people find worthwhile events without checking several disconnected websites. It combines live public event data into one searchable catalogue, lets visitors save a shortlist in their browser, and sends them to the official organizer when they are ready to register.
 
 This is Phase 1 of a three-phase capstone. It is intentionally structured to grow into a Flask-backed booking platform with accounts and organizer-managed events.
 
 ## The problem
 
-Useful workshops, meetups, programming contests, and community events are scattered across many sites. The people most likely to benefit from them often discover them too late—or not at all. Tukio gives them a clear, responsive place to search, compare, save, and follow through.
+Useful workshops, meetups, programming contests, and community events are scattered across many sites. The people most likely to benefit from them often discover them too late—or not at all. Hackaform gives them a clear, responsive place to search, compare, save, and follow through.
 
 ## Features
 
@@ -27,7 +25,7 @@ Useful workshops, meetups, programming contests, and community events are scatte
 
 ## Data sources
 
-Tukio uses APIs that allow direct browser requests and do not require a secret key.
+Hackaform uses APIs that allow direct browser requests and do not require a secret key.
 
 | Source | Endpoint used | What it contributes |
 | --- | --- | --- |
@@ -35,7 +33,7 @@ Tukio uses APIs that allow direct browser requests and do not require a secret k
 | [WordPress.org Events API](https://github.com/WordPress/wordpress.org/blob/trunk/api.wordpress.org/public_html/events/1.0/index.php) | `GET https://api.wordpress.org/events/1.0/?location={city}&number=20` | Current community meetups and WordCamps around selected city hubs |
 | [Codeforces API](https://codeforces.com/apiHelp/methods#contest.list) | `GET https://codeforces.com/api/contest.list?gym=false` | Upcoming competitive-programming events |
 
-The data layer maps all three response formats into one stable event model. If one source is temporarily unavailable, successful results from the other sources still render. No API key or `.env` file is required. Tukio makes anonymous, read-only requests and is not affiliated with or endorsed by the providers or listed organizers; event content remains the property of its respective source.
+The data layer maps all three response formats into one stable event model. If one source is temporarily unavailable, successful results from the other sources still render. No API key or `.env` file is required. Hackaform makes anonymous, read-only requests and is not affiliated with or endorsed by the providers or listed organizers; event content remains the property of its respective source.
 
 ## Tech stack
 
@@ -89,13 +87,13 @@ src/
 
 ## Design decisions
 
-Tukio uses a warm editorial visual style instead of a generic dashboard. Bold type, playful color, generous spacing, and custom event artwork make sparse third-party data feel intentional while keeping the information hierarchy clear. The interface is mobile-first and every interactive control has a keyboard-visible focus state.
+Hackaform uses a warm editorial visual style instead of a generic dashboard. Bold type, playful color, generous spacing, and custom event artwork make sparse third-party data feel intentional while keeping the information hierarchy clear. The interface is mobile-first and every interactive control has a keyboard-visible focus state.
 
-“Save” means saving an event to the current browser. “Register” always opens the organizer’s official page; Tukio does not claim to take payments or create a reservation during Phase 1.
+“Save” means saving an event to the current browser. “Register” always opens the organizer’s official page; Hackaform does not claim to take payments or create a reservation during Phase 1.
 
 ## Challenges and solutions
 
-- **No dependable public hackathon-only API:** prominent hackathon sites either lack a documented discovery API or block browser requests. Tukio uses a broader, reliable event scope and includes programming contests and tech meetups.
+- **No dependable public hackathon-only API:** prominent hackathon sites either lack a documented discovery API or block browser requests. Hackaform uses a broader, reliable event scope and includes programming contests and tech meetups.
 - **Three incompatible response shapes:** a dedicated service layer normalizes dates, locations, pricing, categories, links, and identifiers before data reaches the UI.
 - **Uneven third-party content:** client-side sanitization, generated visual fallbacks, deduplication, and sensible copy fallbacks keep the interface consistent.
 - **External outages:** requests have timeouts and source-level failure tolerance, while the UI provides retry and error states.
@@ -106,7 +104,7 @@ Tukio uses a warm editorial visual style instead of a generic dashboard. Bold ty
 - WordPress discovery currently samples Nairobi, Kampala, Dar es Salaam, London, and Berlin to keep requests bounded.
 - Saved events live only in the current browser and do not sync between devices.
 - Registration and ticket purchasing happen on the organizer’s website.
-- Some public events do not expose an image or price; Tukio shows an accessible visual or text fallback.
+- Some public events do not expose an image or price; Hackaform shows an accessible visual or text fallback.
 
 No known application-breaking bugs remain at submission time.
 

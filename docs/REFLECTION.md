@@ -1,4 +1,4 @@
-# Tukio — written reflection
+# Hackaform — written reflection
 
 ## What I set out to solve
 
@@ -6,7 +6,7 @@ I wanted to help students, developers, and curious people discover useful events
 
 ## What I built
 
-Tukio is a responsive React application with six routes: Home, Explore, Event Details, Saved Events, About, and a not-found page. It dynamically combines event data from Eventyay, the WordPress Events API, and Codeforces. Users can search and filter the catalogue, inspect a normalized detail view, save events in their browser, and continue to the organizer's official registration page.
+Hackaform is a responsive React application with six routes: Home, Explore, Event Details, Saved Events, About, and a not-found page. It dynamically combines event data from Eventyay, the WordPress Events API, and Codeforces. Users can search and filter the catalogue, inspect a normalized detail view, save events in their browser, and continue to the organizer's official registration page.
 
 ## Important decisions
 
@@ -26,4 +26,4 @@ In Phase 2 I would place the aggregation logic behind a Flask API, cache upstrea
 
 ## Final assessment
 
-Tukio meets the Phase 1 goal as a complete client-side product: it uses real external data, React state and controlled inputs, routing, reusable components, meaningful styling, and graceful edge-case handling. More importantly, it establishes a practical foundation for the backend and account features required in the next two phases.
+Hackaform meets the Phase 1 goal as a complete client-side product: it uses real external data, React state and controlled inputs, routing, reusable components, meaningful styling, and graceful edge-case handling. More importantly, it establishes a practical foundation for the backend and account features required in the next two phases.
