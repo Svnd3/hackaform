@@ -40,7 +40,7 @@ export default function SearchPanel({ compact = false, initialValues = {} }) {
           <input
             id={compact ? 'compact-search-location' : 'home-search-location'}
             onChange={(event) => setLocation(event.target.value)}
-            placeholder="City or online"
+            placeholder="Nairobi, Mombasa or online"
             type="text"
             value={location}
           />

@@ -31,7 +31,7 @@ export default function HeroPoster({ event, loading }) {
         </div>
         <div className="hero-poster__generic-footer">
           <span>UP NEXT</span>
-          <strong>Somewhere near you</strong>
+          <strong>Nairobi &amp; beyond</strong>
         </div>
       </div>
     )

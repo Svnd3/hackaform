@@ -129,10 +129,10 @@ export default function EventDetailsPage() {
 
           {registrationUrl ? (
             <a className="button button--primary button--full detail-mobile-action" href={registrationUrl} rel="noreferrer" target="_blank">
-              View official event <ArrowUpRight size={18} aria-hidden="true" />
+              Register on organizer’s site <ArrowUpRight size={18} aria-hidden="true" />
             </a>
           ) : (
-            <span className="button button--disabled button--full detail-mobile-action">Registration coming soon</span>
+            <span className="button button--disabled button--full detail-mobile-action">Organizer registration unavailable</span>
           )}
 
           <div className="detail-quick-facts">
@@ -144,7 +144,7 @@ export default function EventDetailsPage() {
           <section className="detail-copy">
             <p className="eyebrow">The details</p>
             <h2>What to expect</h2>
-            <p>{event.description || 'The organizer has not added a full description yet. Follow the official event link for the newest information.'}</p>
+            <p>{event.description || 'The organizer has not added a full description yet. Check their website for the latest information.'}</p>
           </section>
 
           <section className="detail-organizer">
@@ -152,14 +152,14 @@ export default function EventDetailsPage() {
             <div>
               <p className="eyebrow">Your host</p>
               <h2>{event.organizer}</h2>
-              <p>Event details and registration are managed by the organizer on the official event page.</p>
+              <p>Hackaform does not take bookings or payments. Registration and event updates are handled by the organizer on their website.</p>
             </div>
           </section>
         </div>
 
-        <aside className="detail-sidebar" aria-label="Event booking information">
+        <aside className="detail-sidebar" aria-label="External event registration">
           <p className="eyebrow">Good to know</p>
-          <h2>Ready to be there?</h2>
+          <h2>Continue with the organizer.</h2>
           <div className="sidebar-fact">
             <CalendarDays size={19} aria-hidden="true" />
             <span><small>Starts</small>{formatDateRange(event.startsAt, event.endsAt, { timeZone: event.timezone })}</span>
@@ -175,17 +175,17 @@ export default function EventDetailsPage() {
 
           {registrationUrl ? (
             <a className="button button--primary button--full" href={registrationUrl} rel="noreferrer" target="_blank">
-              View official event <ArrowUpRight size={18} aria-hidden="true" />
+              Register on organizer’s site <ArrowUpRight size={18} aria-hidden="true" />
             </a>
           ) : (
-            <span className="button button--disabled button--full">Registration coming soon</span>
+            <span className="button button--disabled button--full">Organizer registration unavailable</span>
           )}
           <SaveButton event={event} label />
           <button className="share-button" onClick={shareEvent} type="button">
             {copied ? <Check size={18} aria-hidden="true" /> : <Share2 size={18} aria-hidden="true" />}
             {copied ? 'Link copied' : 'Share this event'}
           </button>
-          <p className="sidebar-note"><ExternalLink size={14} aria-hidden="true" /> Registration opens on the organizer’s website.</p>
+          <p className="sidebar-note"><ExternalLink size={14} aria-hidden="true" /> Opens the organizer’s website in a new tab. Confirm dates, fees and venue details there.</p>
         </aside>
       </div>
 

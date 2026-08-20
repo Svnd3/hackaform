@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="footer-intro">
           <Brand footer />
           <p>
-            Find the rooms, ideas and people that make showing up worthwhile.
+            Find worthwhile opportunities in Kenya, across East Africa and online—then register with the organizer.
           </p>
         </div>
 

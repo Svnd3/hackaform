@@ -68,10 +68,10 @@ export default function ExplorePage() {
     <div className="explore-page">
       <header className="page-banner page-banner--explore">
         <div className="container">
-          <p className="eyebrow">Go find your people</p>
+          <p className="eyebrow">From Nairobi outward</p>
           <div className="page-banner__title-row">
             <h1>Explore what’s happening.</h1>
-            <p>Real events, fresh ideas and useful rooms—collected in one thoughtful place.</p>
+            <p>A Kenya-first view of opportunities across East Africa, online and farther afield.</p>
           </div>
 
           <ExploreSearchForm
@@ -187,7 +187,7 @@ function ExploreSearchForm({ initialLocation, initialQuery, onSubmit }) {
         className="explore-search__location"
         id="explore-location"
         onChange={(event) => setLocation(event.target.value)}
-        placeholder="Location"
+        placeholder="Nairobi, Mombasa or online"
         type="text"
         value={location}
       />

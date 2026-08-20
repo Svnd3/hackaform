@@ -25,13 +25,13 @@ export default function HomePage() {
           <div className="home-hero__copy">
             <div className="announcement-pill">
               <span><Sparkles size={14} aria-hidden="true" /></span>
-              Live opportunities, updated daily
+              Built in Nairobi · opportunities updated daily
             </div>
             <h1>
               Find something <em>worth</em> showing up for.
             </h1>
             <p className="home-hero__lede">
-              Discover workshops, conferences, hackathons and community experiences that move you forward.
+              Discover hackathons, workshops, meetups and conferences in Kenya, across East Africa and online.
             </p>
             <div className="home-hero__actions">
               <Link className="button button--primary button--large" to="/events">
@@ -45,7 +45,7 @@ export default function HomePage() {
               <div className="proof-faces" aria-hidden="true">
                 <span>AM</span><span>JK</span><span>ZO</span><span>+</span>
               </div>
-              <p><strong>Built for the curious.</strong><br />Find your next room to grow in.</p>
+              <p><strong>Built in Nairobi, for the curious.</strong><br />Find your next room—or online space—to grow in.</p>
             </div>
           </div>
 
@@ -65,7 +65,7 @@ export default function HomePage() {
         <div className="container">
           <div className="category-section__header">
             <p className="eyebrow">Pick your energy</p>
-            <p>Browse by what gets you out the door.</p>
+            <p>Browse by what gets you learning, building or out the door.</p>
           </div>
           <CategoryChips limit={8} />
         </div>
@@ -74,7 +74,7 @@ export default function HomePage() {
       <section className="page-section spotlight-section">
         <div className="container">
           <SectionHeading
-            copy="A handpicked mix of ideas, people and experiences to add to your calendar."
+            copy="A live mix of Kenyan, regional, online and selected global opportunities to add to your calendar."
             eyebrow="Worth a look"
             link="/events"
             title="This week’s good reasons to go out."
@@ -121,13 +121,13 @@ export default function HomePage() {
           <div>
             <p className="eyebrow">Your next chapter might start here</p>
             <h2>Less scrolling. More showing up.</h2>
-            <p>Search the live catalogue, keep a shortlist and follow the official event link when you are ready.</p>
+            <p>Search the live catalogue, save a shortlist, then register on the organizer’s own website.</p>
           </div>
           <div className="closing-cta__actions">
             <Link className="button button--acid button--large" to="/events">
               Find my next event <ArrowRight size={18} aria-hidden="true" />
             </Link>
-            <span><CheckCircle2 size={16} aria-hidden="true" /> No account needed</span>
+            <span><CheckCircle2 size={16} aria-hidden="true" /> No Hackaform account needed</span>
           </div>
         </div>
       </section>

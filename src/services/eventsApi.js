@@ -13,6 +13,16 @@ export const EVENTS_API_BASE_URL = 'https://api.eventyay.com/v1'
 export const EVENTYAY_WEB_URL = 'https://eventyay.com'
 export const CODEFORCES_API_URL = 'https://codeforces.com/api/contest.list?gym=false'
 export const WORDPRESS_EVENTS_API_URL = 'https://api.wordpress.org/events/1.0/'
+export const GDG_COMMUNITY_WEB_URL = 'https://gdg.community.dev'
+export const GDG_COMMUNITY_API_URL = `${GDG_COMMUNITY_WEB_URL}/api`
+export const GDG_KENYA_SEARCH_URL = `${GDG_COMMUNITY_API_URL}/search/?${new URLSearchParams({
+  country_code: 'KE',
+  latitude: '-1.286389',
+  longitude: '36.817223',
+  order_by_proximity: 'true',
+  proximity: '800',
+  result_types: 'upcoming_event',
+})}`
 
 export const WORDPRESS_HUBS = [
   { city: 'Nairobi', timezone: 'Africa/Nairobi' },
@@ -25,11 +35,17 @@ export const WORDPRESS_HUBS = [
 const DEFAULT_PAGE_SIZE = 36
 const DEFAULT_TIMEOUT_MS = 15_000
 const CODEFORCES_CACHE_TTL_MS = 60_000
+const GDG_SEARCH_CACHE_TTL_MS = 5 * 60_000
+const GDG_DETAIL_CACHE_TTL_MS = 10 * 60_000
 const JSON_API_MEDIA_TYPE = 'application/vnd.api+json'
 const JSON_MEDIA_TYPE = 'application/json'
 
 let codeforcesCache = null
 let codeforcesInFlight = null
+let gdgSearchCache = null
+let gdgSearchInFlight = null
+const gdgDetailCache = new Map()
+const gdgDetailInFlight = new Map()
 
 const COUNTRY_TIMEZONES = {
   DE: 'Europe/Berlin',
@@ -673,8 +689,11 @@ function normalizeWordPressEvent(rawEvent, hub) {
   })
 
   if (event) {
+    event.countryCode = country || null
+    event.countryName = country === 'KE' ? 'Kenya' : null
     event.eventType = normalizeWhitespace(rawEvent.type) || 'community event'
     event.hub = hub.city
+    event.isKenyan = country === 'KE'
   }
 
   return event
@@ -751,6 +770,303 @@ export async function fetchWordPressEvents({
   )
 }
 
+function isKenyanGdgResource(resource) {
+  return normalizeWhitespace(resource?.chapter?.country).toUpperCase() === 'KE'
+}
+
+function asGdgOfficialUrl(value) {
+  const absoluteUrl = asAbsoluteUrl(value, GDG_COMMUNITY_WEB_URL)
+  if (!absoluteUrl) return null
+
+  try {
+    const url = new URL(absoluteUrl)
+    return url.protocol === 'https:' && url.hostname === 'gdg.community.dev'
+      ? url.href
+      : null
+  } catch {
+    return null
+  }
+}
+
+function firstImageUrl(resource) {
+  const candidates = [
+    resource?.cropped_banner_url,
+    resource?.picture?.url,
+    resource?.picture?.thumbnail_url,
+    resource?.event_type_banner?.url,
+    resource?.event_type_logo?.url,
+    resource?.chapter?.logo?.url,
+  ]
+
+  return candidates.map((candidate) => asAbsoluteUrl(candidate)).find(Boolean) ?? null
+}
+
+function uniqueLocationParts(parts) {
+  const seen = new Set()
+
+  return parts
+    .map((part) => stripHtml(part))
+    .filter((part) => {
+      const key = part.toLocaleLowerCase()
+      if (!part || seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+}
+
+function gdgLocationName(resource, online) {
+  if (online) return 'Online'
+
+  const city = resource.hide_location
+    ? resource.chapter?.city
+    : resource.venue_city ?? resource.city ?? resource.chapter?.city
+  const venue = resource.hide_location ? null : resource.venue_name
+  const parts = uniqueLocationParts([venue, city])
+
+  if (!parts.some((part) => /\bkenya\b/i.test(part))) parts.push('Kenya')
+  return parts.join(', ') || 'Kenya'
+}
+
+function gdgTickets(resource) {
+  const tickets = Array.isArray(resource?.tickets)
+    ? resource.tickets
+        .map((ticket) => {
+          if (!ticket || ticket.id == null) return null
+
+          const price = asNumber(ticket.price ?? ticket.reported_price)
+          return {
+            id: `gdg-ticket-${ticket.id}`,
+            attributes: {
+              description: ticket.description,
+              'is-hidden': ticket.visible === false,
+              name: ticket.title || 'Admission',
+              price,
+              quantity: asNumber(ticket.total_count),
+              'sales-ends-at': ticket.sale_end_date,
+              'sales-starts-at': ticket.sale_start_date,
+              type: price === 0 ? 'free' : 'paid',
+            },
+          }
+        })
+        .filter(Boolean)
+    : null
+
+  if (tickets?.length) return tickets
+
+  if (/\bfree\b/i.test(resource?.event_type_title ?? '')) {
+    return [
+      {
+        id: `gdg-ticket-${resource.id}-free`,
+        attributes: { name: 'Free registration', price: 0, type: 'free' },
+      },
+    ]
+  }
+
+  return tickets
+}
+
+/**
+ * Maps GDG Community's Bevy response into Hackaform's stable event model.
+ * Only Kenyan chapter events are accepted, even though the proximity search
+ * can include events from neighbouring countries.
+ */
+export function normalizeGdgEvent(resource) {
+  if (!resource || typeof resource !== 'object' || !isKenyanGdgResource(resource)) {
+    return null
+  }
+
+  const sourceId = resource.id == null ? '' : String(resource.id).trim()
+  const startsAt = asDateString(resource.start_date_iso ?? resource.start_date)
+  if (!sourceId || !startsAt) return null
+
+  const name = stripHtml(resource.title) || 'Google Developer Groups event'
+  const description =
+    stripHtml(resource.description ?? resource.description_short) ||
+    `${name} is an upcoming Google Developer Groups event in Kenya. Visit the official event page for the latest programme and registration details.`
+  const audienceType = normalizeWhitespace(resource.audience_type).toUpperCase()
+  const online =
+    resource.is_virtual_event === true ||
+    audienceType === 'VIRTUAL' ||
+    audienceType === 'ONLINE'
+  const city = stripHtml(resource.venue_city ?? resource.city ?? resource.chapter?.city)
+  const locationName = gdgLocationName(resource, online)
+  const officialUrl = asGdgOfficialUrl(resource.url ?? resource.relative_url)
+  const organizer =
+    stripHtml(resource.chapter?.title) || 'Google Developer Groups Kenya'
+  const tags = normalizeTags(resource.tags)
+  const inferredCategory = inferCategory({ description, name, tags })
+  const category = inferredCategory === 'Other' ? 'Technology' : inferredCategory
+  const tickets = gdgTickets(resource)
+  const currency = normalizeWhitespace(
+    resource.currency ?? resource.tickets?.find?.((ticket) => ticket?.currency)?.currency,
+  )
+  const imageUrl = firstImageUrl(resource)
+  const id = `gdg-${sourceId}`
+  const event = normalizeEvent(
+    {
+      id,
+      attributes: {
+        category,
+        currency,
+        description,
+        'ends-at': resource.end_date_iso ?? resource.end_date,
+        'external-event-url': officialUrl,
+        identifier: id,
+        'large-image-url': imageUrl,
+        latitude: asNumber(resource.venue_latitude),
+        'location-name': locationName,
+        longitude: asNumber(resource.venue_longitude),
+        name,
+        online,
+        'owner-name': organizer,
+        privacy: 'public',
+        'searchable-location-name': online
+          ? normalizeWhitespace([city, 'Kenya'].filter(Boolean).join(', '))
+          : locationName,
+        source: 'GDG Community',
+        'source-id': sourceId,
+        'starts-at': startsAt,
+        state: normalizeWhitespace(resource.status || 'published').toLowerCase(),
+        tags,
+        'ticket-url': officialUrl,
+        timezone:
+          normalizeWhitespace(resource.event_timezone ?? resource.chapter?.timezone) ||
+          'Africa/Nairobi',
+      },
+    },
+    { tickets },
+  )
+
+  if (event) {
+    event.audienceType = audienceType || null
+    event.chapter = organizer
+    event.city = city || null
+    event.countryCode = 'KE'
+    event.countryName = 'Kenya'
+    event.eventType = normalizeWhitespace(resource.event_type_title) || null
+    event.isKenyan = true
+    event.registrationRequired = resource.registration_required ?? null
+  }
+
+  return event
+}
+
+async function gdgSearchPayload({ signal, timeoutMs } = {}) {
+  throwIfAborted(signal)
+
+  if (gdgSearchCache?.expiresAt > Date.now()) {
+    return gdgSearchCache.value
+  }
+
+  if (!gdgSearchInFlight) {
+    const sharedRequest = requestJson(GDG_KENYA_SEARCH_URL, {
+      accept: JSON_MEDIA_TYPE,
+      // The response is shared so one unmounted view cannot cancel another
+      // view's request or prevent the cache from being populated.
+      timeoutMs,
+    })
+      .then((payload) => {
+        if (!Array.isArray(payload.results)) {
+          throw new EventsApiError('GDG Community returned an unexpected response.', {
+            code: 'INVALID_RESPONSE',
+            details: payload,
+            url: GDG_KENYA_SEARCH_URL,
+          })
+        }
+
+        gdgSearchCache = {
+          expiresAt: Date.now() + GDG_SEARCH_CACHE_TTL_MS,
+          value: payload.results,
+        }
+        return payload.results
+      })
+      .finally(() => {
+        if (gdgSearchInFlight === sharedRequest) gdgSearchInFlight = null
+      })
+
+    gdgSearchInFlight = sharedRequest
+  }
+
+  return waitForSharedRequest(gdgSearchInFlight, signal)
+}
+
+export async function fetchGdgKenyaEvents({
+  from = new Date(),
+  signal,
+  timeoutMs,
+  to,
+} = {}) {
+  const startBoundary = new Date(from)
+  const endBoundary = to ? new Date(to) : null
+
+  if (Number.isNaN(startBoundary.getTime())) {
+    throw new TypeError('The "from" value must be a valid date.')
+  }
+  if (endBoundary && Number.isNaN(endBoundary.getTime())) {
+    throw new TypeError('The "to" value must be a valid date.')
+  }
+
+  const resources = await gdgSearchPayload({ signal, timeoutMs })
+
+  return resources
+    .filter(
+      (resource) =>
+        isKenyanGdgResource(resource) &&
+        !resource.is_hidden &&
+        !resource.is_test &&
+        (!resource.result_type || resource.result_type === 'upcoming_event'),
+    )
+    .map(normalizeGdgEvent)
+    .filter((event) => {
+      if (!event) return false
+      const start = new Date(event.startsAt)
+      return start >= startBoundary && (!endBoundary || start <= endBoundary)
+    })
+    .sort((left, right) => new Date(left.startsAt) - new Date(right.startsAt))
+}
+
+async function gdgDetailPayload(sourceId, { signal, timeoutMs } = {}) {
+  throwIfAborted(signal)
+
+  const cached = gdgDetailCache.get(sourceId)
+  if (cached?.expiresAt > Date.now()) return cached.value
+
+  if (!gdgDetailInFlight.has(sourceId)) {
+    const url = `${GDG_COMMUNITY_API_URL}/event/${encodeURIComponent(sourceId)}/`
+    const sharedRequest = requestJson(url, {
+      accept: JSON_MEDIA_TYPE,
+      timeoutMs,
+    })
+      .then((payload) => {
+        if (!payload || typeof payload !== 'object' || String(payload.id) !== sourceId) {
+          throw new EventsApiError('GDG Community returned an unexpected event response.', {
+            code: 'INVALID_RESPONSE',
+            details: payload,
+            url,
+          })
+        }
+
+        if (gdgDetailCache.size >= 50) {
+          gdgDetailCache.delete(gdgDetailCache.keys().next().value)
+        }
+        gdgDetailCache.set(sourceId, {
+          expiresAt: Date.now() + GDG_DETAIL_CACHE_TTL_MS,
+          value: payload,
+        })
+        return payload
+      })
+      .finally(() => {
+        if (gdgDetailInFlight.get(sourceId) === sharedRequest) {
+          gdgDetailInFlight.delete(sourceId)
+        }
+      })
+
+    gdgDetailInFlight.set(sourceId, sharedRequest)
+  }
+
+  return waitForSharedRequest(gdgDetailInFlight.get(sourceId), signal)
+}
+
 function eventTitleKey(event) {
   return String(event.name ?? '')
     .normalize('NFKD')
@@ -773,6 +1089,16 @@ function deduplicateAggregatedEvents(events) {
     seen.add(key)
     return true
   })
+}
+
+function compareKenyaFirst(left, right) {
+  const kenyaPriority = Number(Boolean(right.isKenyan)) - Number(Boolean(left.isKenyan))
+  if (kenyaPriority !== 0) return kenyaPriority
+
+  const leftTime = new Date(left.startsAt).getTime()
+  const rightTime = new Date(right.startsAt).getTime()
+  return (Number.isFinite(leftTime) ? leftTime : Number.POSITIVE_INFINITY) -
+    (Number.isFinite(rightTime) ? rightTime : Number.POSITIVE_INFINITY)
 }
 
 export async function fetchUpcomingEventsPage({
@@ -826,9 +1152,9 @@ export async function fetchUpcomingEventsPage({
 }
 
 /**
- * Aggregates three no-key, browser-CORS-safe sources. A source may fail without
+ * Aggregates four no-key, browser-CORS-safe sources. A source may fail without
  * hiding successful results from the others; the request rejects only when all
- * three sources are unavailable.
+ * four sources are unavailable.
  */
 export async function fetchUpcomingEvents({
   from = new Date(),
@@ -875,6 +1201,12 @@ export async function fetchUpcomingEvents({
       timeoutMs,
       to: endBoundary,
     }),
+    fetchGdgKenyaEvents({
+      from: startBoundary,
+      signal,
+      timeoutMs,
+      to: endBoundary,
+    }),
   ])
   throwIfAborted(signal)
 
@@ -886,7 +1218,7 @@ export async function fetchUpcomingEvents({
   const merged = successful
     .flatMap((result) => result.value)
     .filter(Boolean)
-    .sort((left, right) => new Date(left.startsAt) - new Date(right.startsAt))
+    .sort(compareKenyaFirst)
   const uniqueEvents = deduplicateAggregatedEvents(merged)
   const offset = (resolvedPage - 1) * resolvedPageSize
 
@@ -931,6 +1263,25 @@ async function fetchWordPressEventById(eventId, options) {
   return event
 }
 
+async function fetchGdgEventById(eventId, options) {
+  const sourceId = String(eventId).slice(4)
+  if (!/^\d+$/.test(sourceId)) throw sourceEventNotFound('GDG Community')
+
+  const resource = await gdgDetailPayload(sourceId, options)
+  if (
+    !isKenyanGdgResource(resource) ||
+    resource.is_hidden ||
+    resource.is_test ||
+    (resource.status && String(resource.status).toLowerCase() !== 'published')
+  ) {
+    throw sourceEventNotFound('GDG Community')
+  }
+
+  const event = normalizeGdgEvent(resource)
+  if (!event) throw sourceEventNotFound('GDG Community')
+  return event
+}
+
 export async function fetchEventById(
   eventId,
   { includeTickets = true, signal, timeoutMs } = {},
@@ -946,6 +1297,9 @@ export async function fetchEventById(
   }
   if (requestedId.startsWith('wp-')) {
     return fetchWordPressEventById(requestedId, { signal, timeoutMs })
+  }
+  if (requestedId.startsWith('gdg-')) {
+    return fetchGdgEventById(requestedId, { signal, timeoutMs })
   }
 
   const id = encodeURIComponent(requestedId)

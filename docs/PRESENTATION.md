@@ -12,7 +12,7 @@ This outline is designed for a 5–10 minute showcase. Use one section per slide
 
 **Speaker notes (about 45 seconds)**
 
-Hackaform brings the energy of hackathons into a broader event-discovery product. I built it because useful workshops, meetups, hackathons, and community events are spread across many websites. The product gives users one calm, engaging place to discover what is happening and decide what is worth their time.
+Hackaform brings the energy of hackathons into a Kenya-first event-discovery product. I built it because useful workshops, meetups, hackathons, and community events are spread across many websites and community channels. The product gives users one calm, engaging place to discover what is happening locally while still seeing useful online and international opportunities.
 
 ## Slide 2 — The user problem
 
@@ -45,7 +45,7 @@ I chose a warm editorial style instead of a traditional dashboard so the app fee
 
 **On the slide**
 
-- Eventyay + WordPress Events + Codeforces
+- GDG Community + Eventyay + WordPress Events + Codeforces
 - No API key required
 - One normalized event model
 - Loading, success, empty, and error states
@@ -53,7 +53,7 @@ I chose a warm editorial style instead of a traditional dashboard so the app fee
 
 **Speaker notes (about 90 seconds)**
 
-There was no reliable browser-ready hackathon-only API, so I widened the product to useful public events and combined three CORS-enabled sources. The service layer fetches them in parallel, sanitizes descriptions, normalizes different fields, removes duplicates, and tolerates a single-source outage. Components only consume one consistent event shape. React Router handles the views and query-string filters, while context manages saved events and toast feedback.
+There was no reliable browser-ready Kenya-wide hackathon API, so I widened the product to useful public events and combined four browser-accessible sources. The GDG Community feed supplies live Kenyan developer events, WordPress adds community meetups, Codeforces adds online contests, and Eventyay broadens the catalogue. The service layer fetches them in parallel, keeps only Kenyan GDG chapters, sanitizes descriptions, normalizes different fields, removes duplicates, and tolerates source outages. Components only consume one consistent event shape. React Router handles the views and query-string filters, while context manages saved events and toast feedback.
 
 ## Slide 5 — Demonstration
 
@@ -62,7 +62,7 @@ There was no reliable browser-ready hackathon-only API, so I widened the product
 1. Open the home page and describe the live featured event.
 2. Search for a topic or location.
 3. Apply a category or online filter on Explore.
-4. Open an event and point out date, venue, organizer, and external registration.
+4. Open a Kenyan event and point out its date, venue, organizer, and clearly labelled external registration.
 5. Save the event, visit Saved, then remove it.
 6. Resize or show the mobile layout.
 7. Briefly trigger an empty search to show edge-case handling.
@@ -78,7 +78,7 @@ There was no reliable browser-ready hackathon-only API, so I widened the product
 
 **Speaker notes (about 75 seconds)**
 
-The biggest lesson was that API selection is a product and engineering decision, not just a coding detail. I had to verify freshness, documentation, browser access, and whether “booking” was genuinely possible. In Phase 2 I will move aggregation to Flask, add a database and organizer-submitted events, and replace local saving with reservation records. In Phase 3 users will authenticate, manage their own bookings, and organizers will manage listings.
+The biggest lesson was that API selection is a product and engineering decision, not just a coding detail. I had to verify Kenyan coverage, freshness, browser access, and whether “booking” was genuinely possible. Phase 1 honestly hands registration to each organizer instead of pretending a saved event is a booking. In Phase 2 I will move aggregation to Flask, add a database and organizer-submitted events, and introduce real reservation records. In Phase 3 users will authenticate, manage their own bookings, and organizers will manage listings.
 
 ## Suggested closing
 

@@ -11,7 +11,7 @@ export default function AboutPage() {
             <h1>Life gets better when we leave the group chat.</h1>
           </div>
           <div className="about-hero__copy">
-            <p>Great opportunities are scattered across too many pages. Hackaform brings them into one calm, useful place so students, builders and curious people can spend less time searching and more time participating.</p>
+            <p>Great opportunities across Kenya and East Africa are scattered across event pages and community channels. Built in Nairobi, Hackaform brings them into one calm place while keeping useful online and global events within reach.</p>
             <Link className="button button--acid button--large" to="/events">See what’s happening <ArrowRight size={18} /></Link>
           </div>
         </div>
@@ -30,7 +30,7 @@ export default function AboutPage() {
           <div className="how-grid">
             <article><span>01</span><Search aria-hidden="true" /><h3>Explore freely</h3><p>Search the live catalogue by topic, location, date and format.</p></article>
             <article><span>02</span><Bookmark aria-hidden="true" /><h3>Keep a shortlist</h3><p>Save promising events locally without creating an account.</p></article>
-            <article><span>03</span><Sparkles aria-hidden="true" /><h3>Make it happen</h3><p>Open the official organizer page for the latest details and registration.</p></article>
+            <article><span>03</span><Sparkles aria-hidden="true" /><h3>Register with the host</h3><p>Continue to the organizer’s website for the latest details and registration. Hackaform does not take bookings.</p></article>
           </div>
         </div>
       </section>
@@ -41,11 +41,11 @@ export default function AboutPage() {
             <Database size={30} aria-hidden="true" />
             <p className="eyebrow">Live public data</p>
             <h2>Fresh events, not a frozen demo.</h2>
-            <p>Hackaform dynamically combines published events from the open Eventyay, WordPress Events and Codeforces APIs, then safely normalizes them into one useful catalogue.</p>
+            <p>Hackaform combines live Kenyan GDG listings with published events from Eventyay, WordPress Events and Codeforces, then safely normalizes all four sources into one useful catalogue.</p>
             <a href="https://github.com/Svnd3/hackaform#data-sources" rel="noreferrer" target="_blank">Explore the data sources <ArrowRight size={16} /></a>
           </div>
           <div className="about-principles">
-            <div><ShieldCheck aria-hidden="true" /><span><strong>Respectful by design</strong><small>No account, tracking profile or hidden booking flow.</small></span></div>
+            <div><ShieldCheck aria-hidden="true" /><span><strong>A clear handoff</strong><small>In this phase, registration happens on the organizer’s site; Hackaform does not take payment.</small></span></div>
             <div><UserRoundCheck aria-hidden="true" /><span><strong>Made for real people</strong><small>Responsive, keyboard-friendly and clear about external links.</small></span></div>
             <div><Sparkles aria-hidden="true" /><span><strong>Ready to grow</strong><small>A focused first phase with a deliberate full-stack roadmap.</small></span></div>
           </div>
