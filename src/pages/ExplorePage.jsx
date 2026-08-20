@@ -70,7 +70,10 @@ export default function ExplorePage() {
         <div className="container">
           <p className="eyebrow">From Nairobi outward</p>
           <div className="page-banner__title-row">
-            <h1>Explore what’s happening.</h1>
+            <h1 className="explore-title">
+              <span className="explore-title__kode">K</span>ode ni Yako{' '}
+              <span className="explore-title__cenya">C</span>enya ni yetu
+            </h1>
             <p>A Kenya-first view of opportunities across East Africa, online and farther afield.</p>
           </div>
 

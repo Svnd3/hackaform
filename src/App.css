@@ -1306,6 +1306,21 @@
   line-height: 0.98;
 }
 
+.page-banner--explore .explore-title,
+.page-banner--saved h1 {
+  font-family: 'Jraot Hollow', var(--accent);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.explore-title__kode {
+  color: var(--acid);
+}
+
+.explore-title__cenya {
+  color: var(--orange);
+}
+
 .page-banner__title-row > p {
   max-width: 420px;
   margin-bottom: 32px;
