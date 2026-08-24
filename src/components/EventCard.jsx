@@ -25,6 +25,7 @@ function dateParts(value, timeZone) {
 export default function EventCard({ event, featured = false, eager = false }) {
   const date = dateParts(event.startsAt, event.timezone)
   const categoryColor = CATEGORY_COLORS[event.category] ?? 'neutral'
+  const formatLabel = event.format === 'hybrid' ? 'Hybrid' : event.online ? 'Online' : 'In person'
 
   return (
     <article className={`event-card${featured ? ' event-card--featured' : ''}`}>
@@ -46,7 +47,7 @@ export default function EventCard({ event, featured = false, eager = false }) {
           <span className={`category-pill category-pill--${categoryColor}`}>
             {event.category}
           </span>
-          <span>{event.online ? 'Online' : 'In person'}</span>
+          <span>{formatLabel}</span>
         </div>
         <Link className="event-card__title" to={`/events/${event.id}`}>
           <h3>{event.name}</h3>

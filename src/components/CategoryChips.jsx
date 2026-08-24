@@ -6,7 +6,7 @@ import {
   GraduationCap,
   Music2,
   Palette,
-  Sparkles,
+  Shapes,
   Users2,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -19,7 +19,7 @@ const iconMap = {
   Education: GraduationCap,
   Hackathon: Code2,
   Music: Music2,
-  Other: Sparkles,
+  Other: Shapes,
   Sports: Dumbbell,
   Technology: Cpu,
 }

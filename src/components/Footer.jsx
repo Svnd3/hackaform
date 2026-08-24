@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="footer-intro">
           <Brand footer />
           <p>
-            Find worthwhile opportunities in Kenya, across East Africa and online—then register with the organizer.
+            Find worthwhile opportunities in Kenya, across East Africa and online—then book and manage your place.
           </p>
         </div>
 
@@ -27,8 +27,8 @@ export default function Footer() {
             <a href="https://github.com/Svnd3/hackaform" rel="noreferrer" target="_blank">
               GitHub <ArrowUpRight size={14} aria-hidden="true" />
             </a>
-            <a href="https://github.com/Svnd3/hackaform#data-sources" rel="noreferrer" target="_blank">
-              Data sources <ArrowUpRight size={14} aria-hidden="true" />
+            <a href="https://github.com/Svnd3/hackaform#architecture" rel="noreferrer" target="_blank">
+              Architecture <ArrowUpRight size={14} aria-hidden="true" />
             </a>
           </div>
         </div>

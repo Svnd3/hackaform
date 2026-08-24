@@ -1,10 +1,7 @@
 import {
   ArrowLeft,
-  ArrowUpRight,
   CalendarDays,
   Check,
-  Clock3,
-  ExternalLink,
   MapPin,
   Share2,
   Ticket,
@@ -12,18 +9,32 @@ import {
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import BookingPanel from '../components/BookingPanel.jsx'
 import EventArtwork from '../components/EventArtwork.jsx'
+import EventAgenda from '../components/EventAgenda.jsx'
 import EventGrid from '../components/EventGrid.jsx'
 import SaveButton from '../components/SaveButton.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
 import { ErrorState, LoadingGrid } from '../components/StateViews.jsx'
+import { useAuth } from '../hooks/useAuth.js'
 import { useEventCatalog } from '../hooks/useEventCatalog.js'
 import { useSavedEvents } from '../hooks/useSavedEvents.js'
 import { fetchEventById } from '../services/eventsApi.js'
-import { formatDateRange } from '../utils/eventUtils.js'
+import { formatDateRange, getEventStatus } from '../utils/eventUtils.js'
+
+function statusLabel(event) {
+  if (event.status === 'draft') return 'Draft preview'
+  if (event.status === 'cancelled') return 'Cancelled'
+  const timing = getEventStatus(event)
+  if (timing === 'ongoing') return 'Happening now'
+  if (timing === 'past') return 'Event ended'
+  if (timing === 'date-tba') return 'Date TBA'
+  return 'Upcoming'
+}
 
 export default function EventDetailsPage() {
   const { eventId } = useParams()
+  const { authenticated, loading: authLoading } = useAuth()
   const { savedEvents } = useSavedEvents()
   const cachedEvent = savedEvents.find((event) => String(event.id) === String(eventId))
   const [result, setResult] = useState({ event: null, error: null, requestToken: null, status: 'loading' })
@@ -37,9 +48,10 @@ export default function EventDetailsPage() {
   const { event, error, status } = currentResult
 
   useEffect(() => {
+    if (authLoading) return undefined
     const controller = new AbortController()
 
-    fetchEventById(eventId, { signal: controller.signal })
+    fetchEventById(eventId, { auth: authenticated, signal: controller.signal })
       .then((result) => {
         setResult({ event: result, error: null, requestToken, status: 'success' })
       })
@@ -53,14 +65,14 @@ export default function EventDetailsPage() {
       })
 
     return () => controller.abort()
-  }, [cachedEvent, eventId, requestToken])
+  }, [authenticated, authLoading, cachedEvent, eventId, requestToken])
 
   useEffect(() => {
     if (event?.name) document.title = `${event.name} — Hackaform`
   }, [event?.name])
 
   const relatedEvents = catalog.events
-    .filter((item) => item.id !== eventId && item.category === event?.category)
+    .filter((item) => String(item.id) !== String(eventId) && item.category === event?.category)
     .slice(0, 3)
 
   async function shareEvent() {
@@ -101,8 +113,6 @@ export default function EventDetailsPage() {
     )
   }
 
-  const registrationUrl = event.ticketUrl ?? event.externalUrl ?? event.detailsUrl
-
   return (
     <article className="event-detail-page">
       <div className="container detail-breadcrumb">
@@ -115,7 +125,7 @@ export default function EventDetailsPage() {
         <EventArtwork className="detail-hero__art" event={event} eager />
         <div className="detail-hero__overlay">
           <span className="category-pill category-pill--acid">{event.category}</span>
-          <span className="detail-hero__status">{event.status === 'ongoing' ? 'Happening now' : 'Upcoming'}</span>
+          <span className="detail-hero__status">{statusLabel(event)}</span>
         </div>
       </div>
 
@@ -126,14 +136,6 @@ export default function EventDetailsPage() {
           <p className="detail-lede">
             {event.shortDescription || 'A live experience worth adding to your calendar.'}
           </p>
-
-          {registrationUrl ? (
-            <a className="button button--primary button--full detail-mobile-action" href={registrationUrl} rel="noreferrer" target="_blank">
-              Register on organizer’s site <ArrowUpRight size={18} aria-hidden="true" />
-            </a>
-          ) : (
-            <span className="button button--disabled button--full detail-mobile-action">Organizer registration unavailable</span>
-          )}
 
           <div className="detail-quick-facts">
             <div><CalendarDays aria-hidden="true" /><span><small>Date</small>{formatDateRange(event.startsAt, event.endsAt, { timeZone: event.timezone })}</span></div>
@@ -147,45 +149,27 @@ export default function EventDetailsPage() {
             <p>{event.description || 'The organizer has not added a full description yet. Check their website for the latest information.'}</p>
           </section>
 
+          <EventAgenda items={event.agendaItems} />
+
           <section className="detail-organizer">
             <div className="detail-organizer__avatar"><UserRound aria-hidden="true" /></div>
             <div>
               <p className="eyebrow">Your host</p>
               <h2>{event.organizer}</h2>
-              <p>Hackaform does not take bookings or payments. Registration and event updates are handled by the organizer on their website.</p>
+              <p>This event was created on Hackaform. Bookings and programme updates stay connected to the organizer’s live listing.</p>
             </div>
           </section>
         </div>
 
-        <aside className="detail-sidebar" aria-label="External event registration">
-          <p className="eyebrow">Good to know</p>
-          <h2>Continue with the organizer.</h2>
-          <div className="sidebar-fact">
-            <CalendarDays size={19} aria-hidden="true" />
-            <span><small>Starts</small>{formatDateRange(event.startsAt, event.endsAt, { timeZone: event.timezone })}</span>
+        <aside className="detail-sidebar detail-sidebar--booking" aria-label="Event booking">
+          <BookingPanel event={event} />
+          <div className="detail-secondary-actions">
+            <SaveButton event={event} label />
+            <button className="share-button" onClick={shareEvent} type="button">
+              {copied ? <Check size={18} aria-hidden="true" /> : <Share2 size={18} aria-hidden="true" />}
+              {copied ? 'Link copied' : 'Share this event'}
+            </button>
           </div>
-          <div className="sidebar-fact">
-            <Clock3 size={19} aria-hidden="true" />
-            <span><small>Timezone</small>{event.timezone || 'Local event time'}</span>
-          </div>
-          <div className="sidebar-fact">
-            <MapPin size={19} aria-hidden="true" />
-            <span><small>Place</small>{event.locationLabel}</span>
-          </div>
-
-          {registrationUrl ? (
-            <a className="button button--primary button--full" href={registrationUrl} rel="noreferrer" target="_blank">
-              Register on organizer’s site <ArrowUpRight size={18} aria-hidden="true" />
-            </a>
-          ) : (
-            <span className="button button--disabled button--full">Organizer registration unavailable</span>
-          )}
-          <SaveButton event={event} label />
-          <button className="share-button" onClick={shareEvent} type="button">
-            {copied ? <Check size={18} aria-hidden="true" /> : <Share2 size={18} aria-hidden="true" />}
-            {copied ? 'Link copied' : 'Share this event'}
-          </button>
-          <p className="sidebar-note"><ExternalLink size={14} aria-hidden="true" /> Opens the organizer’s website in a new tab. Confirm dates, fees and venue details there.</p>
         </aside>
       </div>
 

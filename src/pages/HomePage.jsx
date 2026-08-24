@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2, Compass, Sparkles } from 'lucide-react'
+import { ArrowRight, CheckCircle2, CircleDot, Compass, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import CategoryChips from '../components/CategoryChips.jsx'
 import EventCard from '../components/EventCard.jsx'
@@ -24,7 +24,7 @@ export default function HomePage() {
         <div className="container home-hero__grid">
           <div className="home-hero__copy">
             <div className="announcement-pill">
-              <span><Sparkles size={14} aria-hidden="true" /></span>
+              <span><MapPin size={14} aria-hidden="true" /></span>
               Built in Nairobi · opportunities updated daily
             </div>
             <h1>
@@ -50,7 +50,7 @@ export default function HomePage() {
           </div>
 
           <div className="home-hero__visual">
-            <span className="poster-doodle poster-doodle--one" aria-hidden="true">✦</span>
+            <CircleDot className="poster-doodle poster-doodle--one" aria-hidden="true" />
             <span className="poster-doodle poster-doodle--two" aria-hidden="true">GOOD<br />TIMES</span>
             <HeroPoster event={featuredEvent} loading={loading} />
           </div>
@@ -121,13 +121,13 @@ export default function HomePage() {
           <div>
             <p className="eyebrow">Your next chapter might start here</p>
             <h2>Less scrolling. More showing up.</h2>
-            <p>Search the live catalogue, save a shortlist, then register on the organizer’s own website.</p>
+            <p>Search the live catalogue, save a shortlist, then book your place without losing the plan.</p>
           </div>
           <div className="closing-cta__actions">
             <Link className="button button--acid button--large" to="/events">
               Find my next event <ArrowRight size={18} aria-hidden="true" />
             </Link>
-            <span><CheckCircle2 size={16} aria-hidden="true" /> No Hackaform account needed</span>
+            <span><CheckCircle2 size={16} aria-hidden="true" /> Secure bookings · clear capacity</span>
           </div>
         </div>
       </section>

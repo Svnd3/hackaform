@@ -395,16 +395,12 @@ export function searchAndFilterEvents(
   const quickRange = selectedDateRange(date, now)
   const rangeStart = toValidDate(startDate) ?? quickRange?.[0] ?? null
   const rangeEnd = toValidDate(endDate) ?? quickRange?.[1] ?? null
-  const onlineFilter =
-    typeof online === 'string'
-      ? online.toLowerCase() === 'online'
-        ? true
-        : online.toLowerCase() === 'in-person'
-          ? false
-          : null
-      : typeof online === 'boolean'
-        ? online
-        : null
+  const formatFilter = typeof online === 'string'
+    ? ['online', 'in-person', 'hybrid'].includes(online.toLowerCase())
+      ? online.toLowerCase()
+      : null
+    : null
+  const onlineFilter = typeof online === 'boolean' ? online : null
 
   const filtered = events.filter((event) => {
     if (normalizedQuery && !buildEventSearchText(event).includes(normalizedQuery)) return false
@@ -418,6 +414,11 @@ export function searchAndFilterEvents(
       return false
     }
 
+    if (formatFilter) {
+      const declaredFormat = normalizeWhitespace(event.format).toLowerCase().replace('_', '-')
+      const eventFormat = declaredFormat || (event.online ?? event.isOnline ? 'online' : 'in-person')
+      if (eventFormat !== formatFilter) return false
+    }
     if (onlineFilter != null && Boolean(event.online ?? event.isOnline) !== onlineFilter) return false
     if (typeof free === 'boolean' && event.isFree !== free) return false
 

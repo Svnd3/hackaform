@@ -548,12 +548,14 @@
   border-radius: 50%;
 }
 
-.hero-poster__star {
+.hero-poster__mark {
   position: absolute;
   top: 35px;
   left: 36px;
+  width: 62px;
+  height: 62px;
   color: var(--acid);
-  font-size: 4rem;
+  stroke-width: 1.5;
 }
 
 .hero-poster__generic-footer {
@@ -584,9 +586,10 @@
 .poster-doodle--one {
   top: -10px;
   right: -24px;
+  width: 76px;
+  height: 76px;
   color: var(--orange);
-  font-size: 5rem;
-  transform: rotate(12deg);
+  stroke-width: 1.5;
 }
 
 .poster-doodle--two {

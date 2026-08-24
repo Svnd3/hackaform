@@ -115,6 +115,7 @@ export default function ExplorePage() {
               <option value="">Any format</option>
               <option value="online">Online</option>
               <option value="in-person">In person</option>
+              <option value="hybrid">Hybrid</option>
             </select>
           </label>
           {activeFilters.length > 0 && (
@@ -207,6 +208,7 @@ const dateLabels = {
 }
 
 const formatLabels = {
+  hybrid: 'Hybrid',
   online: 'Online',
   'in-person': 'In person',
 }

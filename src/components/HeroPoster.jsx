@@ -1,4 +1,4 @@
-import { ArrowUpRight, MapPin } from 'lucide-react'
+import { ArrowUpRight, MapPin, Ticket } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import EventArtwork from './EventArtwork.jsx'
 
@@ -26,7 +26,7 @@ export default function HeroPoster({ event, loading }) {
       <div className="hero-poster hero-poster--placeholder" aria-hidden="true">
         <div className="hero-poster__generic-art">
           <span className="hero-poster__ring" />
-          <span className="hero-poster__star">✦</span>
+          <Ticket className="hero-poster__mark" aria-hidden="true" />
           <p>Good things<br />happen when<br />we show up.</p>
         </div>
         <div className="hero-poster__generic-footer">

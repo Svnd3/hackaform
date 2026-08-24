@@ -1,4 +1,13 @@
-import { ArrowRight, Bookmark, Database, Search, ShieldCheck, Sparkles, UserRoundCheck } from 'lucide-react'
+import {
+  ArrowRight,
+  Bookmark,
+  CalendarCheck2,
+  Database,
+  Route,
+  Search,
+  ShieldCheck,
+  UserRoundCheck,
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 export default function AboutPage() {
@@ -16,8 +25,8 @@ export default function AboutPage() {
           </div>
         </div>
         <div className="about-marquee" aria-hidden="true">
-          <span>DISCOVER ✦ SAVE ✦ SHOW UP ✦ GROW ✦</span>
-          <span>DISCOVER ✦ SAVE ✦ SHOW UP ✦ GROW ✦</span>
+          <span>DISCOVER • SAVE • SHOW UP • GROW •</span>
+          <span>DISCOVER • SAVE • SHOW UP • GROW •</span>
         </div>
       </header>
 
@@ -29,8 +38,8 @@ export default function AboutPage() {
           </div>
           <div className="how-grid">
             <article><span>01</span><Search aria-hidden="true" /><h3>Explore freely</h3><p>Search the live catalogue by topic, location, date and format.</p></article>
-            <article><span>02</span><Bookmark aria-hidden="true" /><h3>Keep a shortlist</h3><p>Save promising events locally without creating an account.</p></article>
-            <article><span>03</span><Sparkles aria-hidden="true" /><h3>Register with the host</h3><p>Continue to the organizer’s website for the latest details and registration. Hackaform does not take bookings.</p></article>
+            <article><span>02</span><Bookmark aria-hidden="true" /><h3>Choose your event</h3><p>Save a shortlist, compare the details and create an account when you are ready.</p></article>
+            <article><span>03</span><CalendarCheck2 aria-hidden="true" /><h3>Book and manage</h3><p>Reserve a place on Hackaform, update your booking and keep every plan in one schedule.</p></article>
           </div>
         </div>
       </section>
@@ -39,15 +48,15 @@ export default function AboutPage() {
         <div className="container about-data-grid">
           <div className="about-data-card">
             <Database size={30} aria-hidden="true" />
-            <p className="eyebrow">Live public data</p>
-            <h2>Fresh events, not a frozen demo.</h2>
-            <p>Hackaform combines live Kenyan GDG listings with published events from Eventyay, WordPress Events and Codeforces, then safely normalizes all four sources into one useful catalogue.</p>
-            <a href="https://github.com/Svnd3/hackaform#data-sources" rel="noreferrer" target="_blank">Explore the data sources <ArrowRight size={16} /></a>
+            <p className="eyebrow">A full-stack platform</p>
+            <h2>Real events. Real bookings. One source of truth.</h2>
+            <p>Hackaform now runs on its own Flask API and relational database. Organizers publish events and agendas while attendees make persistent bookings with live capacity checks.</p>
+            <a href="https://github.com/Svnd3/hackaform#architecture" rel="noreferrer" target="_blank">Explore the architecture <ArrowRight size={16} /></a>
           </div>
           <div className="about-principles">
-            <div><ShieldCheck aria-hidden="true" /><span><strong>A clear handoff</strong><small>In this phase, registration happens on the organizer’s site; Hackaform does not take payment.</small></span></div>
-            <div><UserRoundCheck aria-hidden="true" /><span><strong>Made for real people</strong><small>Responsive, keyboard-friendly and clear about external links.</small></span></div>
-            <div><Sparkles aria-hidden="true" /><span><strong>Ready to grow</strong><small>A focused first phase with a deliberate full-stack roadmap.</small></span></div>
+            <div><ShieldCheck aria-hidden="true" /><span><strong>Protected by ownership</strong><small>Authentication and server-side checks keep each organizer’s events and attendee’s bookings private to them.</small></span></div>
+            <div><UserRoundCheck aria-hidden="true" /><span><strong>Made for real people</strong><small>Responsive, keyboard-friendly and honest about availability, errors and empty states.</small></span></div>
+            <div><Route aria-hidden="true" /><span><strong>Ready to grow</strong><small>A focused booking platform with room for reminders, waitlists, payments and richer community tools.</small></span></div>
           </div>
         </div>
       </section>
@@ -59,9 +68,9 @@ export default function AboutPage() {
             <h2>Built as a foundation, not a dead end.</h2>
           </div>
           <div className="roadmap">
-            <article className="roadmap__item roadmap__item--current"><span>Now</span><strong>01</strong><div><h3>Discover</h3><p>React interface, public API integration, routing, filtering and browser-based saving.</p></div></article>
-            <article className="roadmap__item"><span>Next</span><strong>02</strong><div><h3>Book</h3><p>Flask API, database, organizer-created events and genuine reservation records.</p></div></article>
-            <article className="roadmap__item"><span>Then</span><strong>03</strong><div><h3>Belong</h3><p>Authentication, personal bookings, cancellations and an organizer dashboard.</p></div></article>
+            <article className="roadmap__item"><span>Built</span><strong>01</strong><div><h3>Discover</h3><p>React interface, public API research, routing, filtering and browser-based saving.</p></div></article>
+            <article className="roadmap__item roadmap__item--current"><span>Now</span><strong>02</strong><div><h3>Organize &amp; book</h3><p>Flask API, PostgreSQL, authentication, organizer-created agendas and genuine reservation records.</p></div></article>
+            <article className="roadmap__item"><span>Next</span><strong>03</strong><div><h3>Belong</h3><p>Waitlists, reminders, calendar sync and richer tools for growing event communities.</p></div></article>
           </div>
         </div>
       </section>

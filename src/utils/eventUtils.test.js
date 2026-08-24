@@ -55,4 +55,15 @@ describe('event utilities', () => {
     expect(formatLocation({ online: true })).toBe('Online event')
     expect(formatLocation({})).toBe('Venue to be announced')
   })
+
+  it('distinguishes hybrid events from online and in-person formats', () => {
+    const formats = [
+      { format: 'in-person', id: 'in-person', online: false },
+      { format: 'online', id: 'online', online: true },
+      { format: 'hybrid', id: 'hybrid', online: false },
+    ]
+
+    expect(searchAndFilterEvents(formats, { online: 'hybrid' }).map((event) => event.id)).toEqual(['hybrid'])
+    expect(searchAndFilterEvents(formats, { online: 'in-person' }).map((event) => event.id)).toEqual(['in-person'])
+  })
 })

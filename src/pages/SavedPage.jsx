@@ -31,7 +31,7 @@ export default function SavedPage() {
           <div>
             <p className="eyebrow">Your shortlist</p>
             <h1>Keep the good ones close.</h1>
-            <p>Events saved here stay on this device. Saving is not a booking—open an event to register with its organizer.</p>
+            <p>Events saved here stay on this device. Saving is not a booking—open an event to reserve a real place with Hackaform.</p>
           </div>
           <div className="saved-header__stamp" aria-hidden="true">
             <Bookmark fill="currentColor" />

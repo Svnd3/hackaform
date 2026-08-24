@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { Bookmark, Menu, Search, X } from 'lucide-react'
+import { Bookmark, CalendarCheck2, LogIn, LogOut, Menu, PlusCircle, Search, X } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth.js'
 import { useSavedEvents } from '../hooks/useSavedEvents.js'
 import Brand from './Brand.jsx'
 
-const navigation = [
+const publicNavigation = [
   { label: 'Home', to: '/' },
   { label: 'Explore', to: '/events' },
   { label: 'Saved', to: '/saved' },
@@ -19,6 +20,14 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuButtonRef = useRef(null)
   const { savedCount } = useSavedEvents()
+  const { authenticated, logout, user } = useAuth()
+  const navigation = authenticated
+    ? [
+        ...publicNavigation.slice(0, 2),
+        { label: 'My schedule', to: '/schedule' },
+        ...publicNavigation.slice(2),
+      ]
+    : publicNavigation
 
   useEffect(() => {
     if (!menuOpen) return undefined
@@ -55,9 +64,19 @@ export default function Navbar() {
           <NavLink className="nav-search" to="/events" aria-label="Search events">
             <Search size={19} aria-hidden="true" />
           </NavLink>
-          <NavLink className="button button--dark nav-cta" to="/events">
-            Find events
-          </NavLink>
+          {authenticated ? (
+            <>
+              <NavLink className="nav-user" to="/organizer" title="Open organizer studio">
+                <span>{user.name?.slice(0, 1).toUpperCase() || 'H'}</span>
+                <small>{user.name?.split(' ')[0]}</small>
+              </NavLink>
+              <button className="nav-logout" onClick={logout} type="button" aria-label="Sign out"><LogOut size={18} /></button>
+            </>
+          ) : (
+            <NavLink className="button button--dark nav-cta" to="/login">
+              Sign in <LogIn size={17} aria-hidden="true" />
+            </NavLink>
+          )}
           <button
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
@@ -86,9 +105,14 @@ export default function Navbar() {
                 )}
               </NavLink>
             ))}
-            <NavLink className="button button--primary" onClick={() => setMenuOpen(false)} to="/events">
-              Browse all events
-            </NavLink>
+            {authenticated ? (
+              <>
+                <NavLink className="button button--primary" onClick={() => setMenuOpen(false)} to="/organizer"><PlusCircle size={17} /> Organizer studio</NavLink>
+                <button className="mobile-signout" onClick={() => { logout(); setMenuOpen(false) }} type="button"><LogOut size={17} /> Sign out</button>
+              </>
+            ) : (
+              <NavLink className="button button--primary" onClick={() => setMenuOpen(false)} to="/login"><CalendarCheck2 size={17} /> Sign in to plan</NavLink>
+            )}
           </nav>
         </div>
       )}

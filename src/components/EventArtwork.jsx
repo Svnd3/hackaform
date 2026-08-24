@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Sparkles } from 'lucide-react'
+import { CalendarDays } from 'lucide-react'
 
 function toneFor(id = '') {
   const tones = ['orange', 'violet', 'sky', 'acid', 'pink', 'green']
@@ -27,7 +27,7 @@ export default function EventArtwork({ event, eager = false, className = '' }) {
       ) : (
         <div className="event-artwork__fallback" aria-label={`${event.name} graphic`} role="img">
           <span className="event-artwork__orb" />
-          <Sparkles aria-hidden="true" />
+          <CalendarDays aria-hidden="true" />
           <strong>{event.category}</strong>
           <small>Make a day of it</small>
         </div>

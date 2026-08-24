@@ -2,14 +2,17 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import App from './App.jsx'
+import AuthProvider from './context/AuthProvider.jsx'
 import { SavedEventsProvider } from './context/SavedEventsContext.jsx'
 
 function renderAt(path) {
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <SavedEventsProvider>
-        <App />
-      </SavedEventsProvider>
+      <AuthProvider initialUser={null}>
+        <SavedEventsProvider>
+          <App />
+        </SavedEventsProvider>
+      </AuthProvider>
     </MemoryRouter>,
   )
 }

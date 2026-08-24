@@ -2,15 +2,18 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
+import AuthProvider from '../context/AuthProvider.jsx'
 import { SavedEventsProvider } from '../context/SavedEventsContext.jsx'
 import Navbar from './Navbar.jsx'
 
 function renderNavbar() {
   return render(
     <MemoryRouter>
-      <SavedEventsProvider>
-        <Navbar />
-      </SavedEventsProvider>
+      <AuthProvider initialUser={null}>
+        <SavedEventsProvider>
+          <Navbar />
+        </SavedEventsProvider>
+      </AuthProvider>
     </MemoryRouter>,
   )
 }

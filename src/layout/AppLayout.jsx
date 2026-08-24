@@ -39,6 +39,12 @@ function titleForPath(pathname) {
   if (pathname === '/events') return 'Explore events — Hackaform'
   if (pathname === '/saved') return 'Saved events — Hackaform'
   if (pathname === '/about') return 'About — Hackaform'
+  if (pathname === '/login') return 'Sign in — Hackaform'
+  if (pathname === '/register') return 'Create an account — Hackaform'
+  if (pathname === '/schedule') return 'My schedule — Hackaform'
+  if (pathname === '/organizer') return 'Organizer studio — Hackaform'
+  if (pathname === '/organizer/events/new') return 'Create an event — Hackaform'
+  if (pathname.startsWith('/organizer/events/')) return 'Edit event — Hackaform'
   if (pathname.startsWith('/events/')) return 'Event details — Hackaform'
   return 'Page not found — Hackaform'
 }
