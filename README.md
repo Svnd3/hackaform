@@ -1,134 +1,261 @@
-# Hackaform — Kenya-first Event Discovery
+# Hackaform — Event Planning, Without the Chaos
 
 [![CI](https://github.com/Svnd3/hackaform/actions/workflows/ci.yml/badge.svg)](https://github.com/Svnd3/hackaform/actions/workflows/ci.yml)
 
-Hackaform is a polished React application that helps students, developers, and curious people discover worthwhile opportunities in Kenya without checking several disconnected websites. It combines live Kenyan tech events with selected regional, online, and global listings in one searchable catalogue, lets visitors save a shortlist in their browser, and sends them to the official organizer when they are ready to register.
+Hackaform is a full-stack event productivity platform for people who organize and attend hackathons, workshops, meetups, and community events. Visitors can discover opportunities, attendees can keep bookings in one schedule, and organizers can publish events, build agendas, monitor capacity, and review attendance from one workspace.
 
-This is Phase 1 of a three-phase capstone. It is intentionally structured to grow into a Flask-backed booking platform with accounts and organizer-managed events.
+Phase 2 extends the original React discovery prototype instead of replacing it. Public event feeds have been replaced by a custom Flask REST API and PostgreSQL database, with persistent relational data, authentication, ownership authorization, and complete CRUD workflows.
 
-## The problem
+## Why Hackaform exists
 
-Useful Kenyan hackathons, workshops, meetups, programming contests, and community events are scattered across many sites and community channels. The people most likely to benefit from them often discover them too late—or not at all. Hackaform gives them a clear, responsive place to search, compare, save, and follow through while keeping relevant online and international opportunities within reach.
+Useful Kenyan and East African events are often scattered across websites and group chats. Attendees lose time comparing incomplete posts and tracking plans manually; organizers repeat event details across tools and manage attendance in spreadsheets. Hackaform turns that fragmented process into a dependable flow:
 
-## Features
+1. Discover a relevant event.
+2. Review its programme and remaining capacity.
+3. Book one or more places.
+4. Manage the booking from a personal schedule.
+5. Create and operate an event from the organizer studio.
 
-- Live Kenyan GDG events plus regional, online, and global listings aggregated from four keyless public sources
-- Keyword, location, category, date, and online/in-person filters
-- Shareable filter state stored in the URL
-- Responsive home, explore, event-details, saved, about, and 404 views
-- Browser-based saved events using `localStorage`
-- Official registration links with clear external-site behavior
-- Loading skeletons, retryable error states, and useful empty states
-- API normalization, HTML sanitization, duplicate removal, request cancellation, and timeouts
-- Keyboard navigation, visible focus styles, semantic landmarks, reduced-motion support, and live result announcements
-- Automated tests, linting, production build checks, and GitHub Actions CI
+## Phase 2 features
 
-## Data sources
+### Attendee experience
 
-Hackaform uses public data sources that allow direct browser requests and do not require a secret key.
+- Browse and search published events by keyword, category, location, date, and format.
+- View event details, availability, organizer information, and an ordered agenda.
+- Register, sign in, and restore a session with a bearer JWT.
+- Create, read, update, and delete personal bookings.
+- Keep persistent bookings in **My schedule**.
+- Save a separate browser-local shortlist before deciding to book.
 
-| Source | Endpoint used | What it contributes | Important limitation |
-| --- | --- | --- | --- |
-| [Google Developer Groups Community](https://gdg.community.dev/events/) | `GET https://gdg.community.dev/api/search/?result_types=upcoming_event&country_code=KE&latitude=-1.286389&longitude=36.817223&order_by_proximity=true&proximity=800`; `GET /api/event/:id/` | Current Kenyan developer meetups, workshops, and DevFests with organizer links and detailed event data | These public JSON endpoints power the official GDG website but are not a documented, versioned developer API and may change. Hackaform filters results to `chapter.country === "KE"` because nearby-country results can also be returned. |
-| [Eventyay Open Event API](https://api.eventyay.com/#events-events-collection-get) | `GET https://api.eventyay.com/v1/events`, `GET /events/:id`, `GET /events/:id/tickets` | Public events, descriptions, media, venues, and ticket metadata | Organizer-submitted catalogue data can be sparse or repeated. |
-| [WordPress.org Events API](https://github.com/WordPress/wordpress.org/blob/trunk/api.wordpress.org/public_html/events/1.0/index.php) | `GET https://api.wordpress.org/events/1.0/?location={city}&number=20` | Current community meetups and WordCamps around selected city hubs, including Nairobi | It is a WordPress-community feed rather than a general event directory. |
-| [Codeforces API](https://codeforces.com/apiHelp/methods#contest.list) | `GET https://codeforces.com/api/contest.list?gym=false` | Upcoming online competitive-programming events | It does not provide event images, prices, or long descriptions. |
+### Organizer experience
 
-The data layer maps all four response formats into one stable event model and prioritizes Kenyan listings before the wider catalogue. If one source is temporarily unavailable, successful results from the other sources still render. No API key or `.env` file is required. Hackaform makes anonymous, read-only requests and is not affiliated with or endorsed by Google, GDG, Eventyay, WordPress.org, Codeforces, or the listed organizers; event content remains the property of its respective source.
+- Create, read, update, publish, cancel, and delete owned events.
+- Create, read, update, reorder, and delete related agenda items.
+- Review attendee names, statuses, quantities, and confirmed capacity.
+- Manage draft and cancelled listings privately.
+- Receive clear validation, authorization, conflict, loading, empty, and error feedback.
 
-## Tech stack
+### Data integrity and security
 
-- React 19 and React Router
-- Vite
-- JavaScript / JSX
-- Custom responsive CSS
-- Lucide React icons
-- Vitest, Testing Library, and jsdom
-- Oxlint
+- Passwords are hashed and never returned by the API.
+- Protected requests use `Authorization: Bearer <access_token>`.
+- The API, not only the UI, enforces event and booking ownership.
+- Database constraints prevent duplicate user/event bookings and invalid quantities.
+- PostgreSQL row locking and server-side checks protect event capacity.
+- Agenda times must remain inside their parent event.
+- Structured JSON errors provide stable codes, readable messages, and field details.
 
-## Run locally
+## Architecture
 
-Requirements: Node.js 22.12+ and npm.
+```mermaid
+flowchart LR
+    A[React + React Router] -->|JSON over /api| B[Flask REST API]
+    B --> C[JWT authentication]
+    B --> D[SQLAlchemy]
+    D --> E[(PostgreSQL)]
+```
+
+The relational model is:
+
+- A **User** owns many **Events**.
+- An **Event** contains many **AgendaItems**.
+- A **User** makes many **Bookings**.
+- A **Booking** belongs to one User and one Event.
+
+See the complete [ERD and integrity rules](docs/ERD.md) and the [Phase 2 pitch](docs/PHASE2_PITCH.md).
+
+## Technology
+
+| Layer | Tools |
+| --- | --- |
+| Client | React 19, React Router, Vite, JavaScript, CSS, Lucide icons |
+| API | Flask, Flask-SQLAlchemy, Flask-Migrate, Flask-JWT-Extended, Flask-CORS |
+| Data | PostgreSQL 16, SQLAlchemy, Alembic migrations |
+| Quality | Vitest, Testing Library, Pytest, pytest-cov, Ruff, Oxlint, GitHub Actions |
+| Runtime | Gunicorn and Docker Compose |
+
+## Project structure
+
+```text
+hackaform/
+├── src/                    React pages, components, state, and API services
+├── server/
+│   ├── app/
+│   │   ├── models/         User, Event, AgendaItem, Booking
+│   │   ├── routes/         Auth and REST blueprints
+│   │   └── seed.py         Repeatable demo data
+│   ├── migrations/         Alembic schema history
+│   ├── tests/              API, model, auth, and ownership tests
+│   └── docker-compose.yml  PostgreSQL + Flask services
+├── docs/                   Pitch, ERD, and showcase guide
+└── .github/workflows/      Frontend and backend CI
+```
+
+## Local setup
+
+### Prerequisites
+
+- Node.js 22.12 or newer
+- Python 3.12 or newer
+- PostgreSQL 16, or Docker with Compose
+
+### 1. Clone and install the React client
 
 ```bash
 git clone git@github.com:Svnd3/hackaform.git
 cd hackaform
 npm install
+```
+
+### 2. Start PostgreSQL
+
+The included Compose file starts PostgreSQL with the development credentials already reflected in `server/.env.example`.
+
+```bash
+cd server
+docker-compose up -d database
+```
+
+If your Docker installation uses the newer plugin, run `docker compose up -d database` instead.
+
+### 3. Configure and run Flask
+
+```bash
+cp .env.example .env
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+flask --app run.py db upgrade
+flask --app run.py seed
+flask --app run.py run --debug
+```
+
+Change `JWT_SECRET_KEY` before any shared or production deployment. The API runs at `http://127.0.0.1:5000`.
+
+### 4. Run React
+
+In a second terminal, from the repository root:
+
+```bash
 npm run dev
 ```
 
-Open the local URL printed by Vite, usually `http://localhost:5173`.
-
-## Available commands
+Open `http://127.0.0.1:5173`. Vite proxies local `/api` traffic to Flask. For a separately hosted API, set:
 
 ```bash
-npm run dev        # start the development server
-npm run test       # run the test suite once
-npm run test:watch # run tests in watch mode
-npm run lint       # run Oxlint
-npm run build      # create a production build in dist/
-npm run preview    # preview the production build
-npm run check      # lint, test, then build
+VITE_API_BASE_URL=https://your-api.example.com/api
 ```
 
-## Project structure
+### Full Docker option
 
-```text
-src/
-├── components/   reusable UI building blocks
-├── context/      saved-event state and notifications
-├── data/         display categories
-├── hooks/        catalogue and saved-event hooks
-├── layout/       shared application shell
-├── pages/        route-level views
-├── services/     API aggregation and normalization
-├── test/         shared test setup
-└── utils/        filtering, formatting, and sanitization
+To build Flask and PostgreSQL together:
+
+```bash
+cd server
+docker-compose up --build
+docker-compose exec api flask --app run.py seed
 ```
+
+## Demo accounts
+
+After `flask --app run.py seed`:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Organizer | `organizer@hackaform.test` | `DemoPass123` |
+| Attendee | `attendee@hackaform.test` | `DemoPass123` |
+
+The deterministic seed creates two users, one published event, two agenda items, and one confirmed booking. Use `flask --app run.py seed --reset` to restore the demo state.
+
+## REST API
+
+All responses use `{"data": ...}`; paginated event collections also include `meta`. Failures use:
+
+```json
+{
+  "error": {
+    "code": "validation_error",
+    "message": "Please correct the highlighted fields.",
+    "fields": {
+      "title": "This field is required."
+    }
+  }
+}
+```
+
+| Method | Endpoint | Access | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/api/health` | Public | Health and database check |
+| `POST` | `/api/auth/register` | Public | Create account and return JWT |
+| `POST` | `/api/auth/login` | Public | Authenticate and return JWT |
+| `GET` | `/api/auth/me` | Authenticated | Restore current user |
+| `GET` | `/api/events` | Public | Search/filter published events |
+| `GET` | `/api/events?mine=true` | Authenticated | List the organizer's events |
+| `POST` | `/api/events` | Authenticated | Create an event |
+| `GET` | `/api/events/:id` | Public/owner | Read an event and agenda |
+| `PATCH/DELETE` | `/api/events/:id` | Event owner | Update or delete an event |
+| `GET/POST` | `/api/events/:id/agenda-items` | Owner for writes | List or create agenda items |
+| `GET/PATCH/DELETE` | `/api/agenda-items/:id` | Event owner | Read, update, or delete an agenda item |
+| `GET/POST` | `/api/bookings` | Authenticated | List personal bookings or create one |
+| `GET/PATCH/DELETE` | `/api/bookings/:id` | Booking owner | Read, update, or delete a booking |
+| `GET` | `/api/events/:id/bookings` | Event owner | Review an event's attendee roster |
+
+Event queries support `search`, `category`, `city`, `format`, `status`, `page`, and `perPage`.
+
+## Quality checks
+
+Run the complete client check:
+
+```bash
+npm run check
+```
+
+Run the backend suite:
+
+```bash
+cd server
+source .venv/bin/activate
+ruff check .
+pytest --cov=app --cov-report=term-missing
+flask --app run.py db check
+```
+
+Current verified result:
+
+- React: 13 test files, 37 tests; lint and production build pass.
+- Flask: 33 tests pass with 93% statement coverage; Ruff passes.
+- Alembic upgrade, schema-drift check, seed, and downgrade pass.
+
+GitHub Actions repeats the client and server checks on pushes and pull requests to `main`.
 
 ## Design decisions
 
-Hackaform uses a warm editorial visual style instead of a generic dashboard. Bold type, playful color, generous spacing, and custom event artwork make sparse third-party data feel intentional while keeping the information hierarchy clear. The interface is mobile-first and every interactive control has a keyboard-visible focus state.
+- **Extend, do not restart:** the Phase 1 component system, routes, filters, accessibility work, and saved-event feature remain in use.
+- **Owned data first:** the custom API is the source of truth for events, agendas, users, capacity, and bookings.
+- **Three meaningful related resources:** Event, AgendaItem, and Booking each support complete CRUD.
+- **Server-side ownership:** hidden buttons are useful UX, but authorization is always enforced in Flask.
+- **Focused MVP:** payments, email reminders, messaging, waitlists, calendar sync, and AI recommendations are deferred until the core workflows are dependable.
 
-“Save” means saving an event to the current browser. “Register” always opens the organizer’s official page; Hackaform does not claim to take payments or create a reservation during Phase 1.
+## Challenges and known limitations
 
-## Challenges and solutions
+- The Phase 1 external sources used different schemas; Phase 2 required a stable owned event contract while preserving the existing card and filter UI. A normalization boundary in `src/services/eventsApi.js` keeps components decoupled from transport details.
+- Concurrent booking requests require more than a client-side counter, so capacity validation runs in Flask inside a locked transaction.
+- Date/time inputs are submitted as ISO 8601 values and stored in UTC while each event keeps its display timezone.
+- JWTs are stored in browser local storage for this classroom MVP. A production iteration should use short-lived tokens with secure refresh-token cookies and a revocation strategy.
+- The catalogue currently loads up to 60 events into client-side filters; server-driven pagination or infinite scrolling is the next scale improvement.
+- Hackaform does not yet process payments, send reminders, upload images, or provide waitlists.
+- No blocking bugs are known in the documented MVP.
 
-- **No dependable public Kenya-wide hackathon API:** prominent hackathon and local ticketing sites either lack a documented discovery API, require protected credentials, or block browser requests. Hackaform uses the live GDG feed for Kenyan tech opportunities and supplements it with browser-safe public sources.
-- **Four incompatible response shapes:** a dedicated service layer normalizes dates, locations, pricing, categories, links, and identifiers before data reaches the UI.
-- **Uneven third-party content:** client-side sanitization, generated visual fallbacks, deduplication, and sensible copy fallbacks keep the interface consistent.
-- **External outages:** requests have timeouts and source-level failure tolerance, while the UI provides retry and error states.
+## Documentation and presentation
 
-## Known limitations
-
-- Event availability and accuracy depend on the upstream providers.
-- GDG's public website endpoints are not a versioned developer API, so their response shape may change. Other sources remain available if that feed fails.
-- WordPress discovery currently samples Nairobi, Kampala, Dar es Salaam, London, and Berlin to keep requests bounded.
-- Saved events live only in the current browser and do not sync between devices.
-- Saving is not a booking. Registration, reservations, payments, and ticket purchasing happen on the organizer’s website.
-- Some public events do not expose an image or price; Hackaform shows an accessible visual or text fallback.
-
-No known application-breaking bugs remain at submission time.
-
-## Capstone roadmap
-
-1. **Phase 1 — Discover:** React UI, public API integration, routing, filters, and local saving.
-2. **Phase 2 — Book:** Flask REST API, PostgreSQL database, organizer-created events, and real reservation records.
-3. **Phase 3 — Belong:** authentication, user-owned bookings, cancellations, profiles, and an organizer dashboard.
-
-## Deployment
-
-The repository includes SPA routing configuration for both Netlify and Vercel. Build with `npm run build` and publish the `dist` directory. No environment variables are needed.
-
-## Documentation
-
-- [Presentation outline and speaker notes](docs/PRESENTATION.md)
-- [Written project reflection](docs/REFLECTION.md)
-
-## Author
-
-Built by [Svnd3](https://github.com/Svnd3) for the Moringa School Phase 1 React capstone.
+- [Phase 2 project pitch](docs/PHASE2_PITCH.md)
+- [Entity relationship diagram](docs/ERD.md)
+- [Under-10-minute showcase guide](docs/PHASE2_DEMO.md)
+- [Written reflection](docs/PHASE2_REFLECTION.md)
+- [Peer-review template](docs/PEER_REVIEW_TEMPLATE.md)
+- [Submission checklist](docs/SUBMISSION_CHECKLIST.md)
+- [Backend implementation notes](server/README.md)
 
 ## License
 
-Released under the [MIT License](LICENSE).
+This student capstone is provided for educational use. Event and account data in the seed are fictional.
