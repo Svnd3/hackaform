@@ -1,0 +1,7 @@
+from .agenda import agenda_bp
+from .auth import auth_bp
+from .bookings import bookings_bp
+from .events import events_bp
+from .health import health_bp
+
+__all__ = ["agenda_bp", "auth_bp", "bookings_bp", "events_bp", "health_bp"]

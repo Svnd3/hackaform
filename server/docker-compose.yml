@@ -1,0 +1,35 @@
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: hackaform
+      POSTGRES_USER: hackaform
+      POSTGRES_PASSWORD: hackaform
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hackaform -d hackaform"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+    volumes:
+      - hackaform_postgres:/var/lib/postgresql/data
+
+  api:
+    build: .
+    command: >-
+      sh -c "flask --app run.py db upgrade &&
+      gunicorn --bind 0.0.0.0:5000 --workers 2 wsgi:app"
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://hackaform:hackaform@database:5432/hackaform
+      JWT_SECRET_KEY: local-compose-secret-change-before-deployment
+      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+    ports:
+      - "5000:5000"
+
+volumes:
+  hackaform_postgres:
+
