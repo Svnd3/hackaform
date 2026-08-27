@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: hackaform-api-svnd3
+    runtime: python
+    plan: free
+    region: frankfurt
+    rootDir: server
+    buildCommand: pip install -r requirements.txt
+    startCommand: flask --app run.py db upgrade && flask --app run.py seed && exec gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 wsgi:app
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hackaform-postgres
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://hackaform-ten.vercel.app
+
+databases:
+  - name: hackaform-postgres
+    plan: free
+    region: frankfurt
+    postgresMajorVersion: "16"
+    databaseName: hackaform
+    user: hackaform

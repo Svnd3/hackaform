@@ -134,6 +134,12 @@ Create future model migrations with `flask --app run.py db migrate -m "describe 
 | `CORS_ORIGINS` | Yes | Comma-separated allowed React origins |
 | `FLASK_DEBUG` | No | Set to `1` only for local development |
 
+## Render deployment
+
+The root `render.yaml` Blueprint provisions the API and PostgreSQL together on free plans. Its start command applies migrations, loads the idempotent seed, and then starts Gunicorn. From the repository page, use the **Deploy to Render** button in the main README and approve the two resources. The configured API hostname is `https://hackaform-api-svnd3.onrender.com`; Vercel forwards `/api/*` requests to it.
+
+The Blueprint generates `SECRET_KEY` and `JWT_SECRET_KEY`, obtains `DATABASE_URL` directly from the managed database, and restricts cross-origin browser requests to `https://hackaform-ten.vercel.app`. Never run the seed command with `--reset` during startup because that would erase user-created records.
+
 ## Known limitations / Phase 3 opportunities
 
 - Access tokens expire after 12 hours; refresh-token rotation and revocation are future work.

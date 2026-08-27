@@ -74,6 +74,18 @@ See the complete [ERD and integrity rules](docs/ERD.md) and the [Phase 2 pitch](
 | Quality | Vitest, Testing Library, Pytest, pytest-cov, Ruff, Oxlint, GitHub Actions |
 | Runtime | Gunicorn and Docker Compose |
 
+## Live deployment
+
+- Frontend: [hackaform-ten.vercel.app](https://hackaform-ten.vercel.app)
+- API (after the Render Blueprint is created): [hackaform-api-svnd3.onrender.com/api](https://hackaform-api-svnd3.onrender.com/api)
+- Health check: [hackaform-api-svnd3.onrender.com/api/health](https://hackaform-api-svnd3.onrender.com/api/health)
+
+The repository includes a Render Blueprint that creates both the Flask web service and PostgreSQL database on explicit free plans, generates production secrets, applies Alembic migrations, and loads the repeatable demonstration data. Deploy it with:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Svnd3/hackaform)
+
+Vercel proxies `/api/*` to the Render service, so the browser keeps a same-origin API URL and no public database credentials are exposed. After accepting the Blueprint, wait for both Render resources to become available and redeploy the latest `main` commit on Vercel if it has not already rebuilt automatically. A free Render service sleeps after 15 minutes without traffic, so its first request can take about a minute. Free Render PostgreSQL databases expire after 30 days and should be recreated or upgraded before a later showcase.
+
 ## Project structure
 
 ```text
