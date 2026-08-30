@@ -2,9 +2,9 @@
 
 [![CI](https://github.com/Svnd3/hackaform/actions/workflows/ci.yml/badge.svg)](https://github.com/Svnd3/hackaform/actions/workflows/ci.yml)
 
-Hackaform is a full-stack event productivity platform for people who organize and attend hackathons, workshops, meetups, and community events. Visitors can discover opportunities, attendees can keep bookings in one schedule, and organizers can publish events, build agendas, monitor capacity, and review attendance from one workspace.
+Hackaform is a deployment-ready full-stack event productivity platform for people who organize and attend hackathons, workshops, meetups, and community events. Visitors can discover opportunities, authenticated attendees can manage their own bookings, and organizers can publish events, build agendas, monitor capacity, and review attendance from one workspace.
 
-Phase 2 extends the original React discovery prototype instead of replacing it. Public event feeds have been replaced by a custom Flask REST API and PostgreSQL database, with persistent relational data, authentication, ownership authorization, and complete CRUD workflows.
+Phase 3 completes the original React discovery prototype with secure authentication, authorization, and user-owned data. Hackaform's React client communicates with its own Flask REST API and PostgreSQL database; passwords are hashed, protected requests use JWTs, and Flask enforces ownership for every event, agenda, and booking mutation. Authentication was introduced early during Phase 2, so the final phase focuses on verifying, testing, documenting, and deploying that security boundary rather than rebuilding the product.
 
 ## Why Hackaform exists
 
@@ -16,7 +16,7 @@ Useful Kenyan and East African events are often scattered across websites and gr
 4. Manage the booking from a personal schedule.
 5. Create and operate an event from the organizer studio.
 
-## Phase 2 features
+## Phase 3 features
 
 ### Attendee experience
 
@@ -39,7 +39,8 @@ Useful Kenyan and East African events are often scattered across websites and gr
 
 - Passwords are hashed and never returned by the API.
 - Protected requests use `Authorization: Bearer <access_token>`.
-- The API, not only the UI, enforces event and booking ownership.
+- The API, not only the UI, enforces event, agenda, and booking ownership.
+- Anonymous visitors are redirected away from personal workspaces, and protected API routes reject missing, invalid, or expired tokens.
 - Database constraints prevent duplicate user/event bookings and invalid quantities.
 - PostgreSQL row locking and server-side checks protect event capacity.
 - Agenda times must remain inside their parent event.
@@ -62,7 +63,7 @@ The relational model is:
 - A **User** makes many **Bookings**.
 - A **Booking** belongs to one User and one Event.
 
-See the complete [ERD and integrity rules](docs/ERD.md) and the [Phase 2 pitch](docs/PHASE2_PITCH.md).
+See the complete [ERD and integrity rules](docs/ERD.md), the [Phase 3 pitch](docs/PHASE3_PITCH.md), and the [2:30 live demo guide](docs/PHASE3_DEMO.md).
 
 ## Technology
 
@@ -77,14 +78,14 @@ See the complete [ERD and integrity rules](docs/ERD.md) and the [Phase 2 pitch](
 ## Live deployment
 
 - Frontend: [hackaform-ten.vercel.app](https://hackaform-ten.vercel.app)
-- API (after the Render Blueprint is created): [hackaform-api-svnd3.onrender.com/api](https://hackaform-api-svnd3.onrender.com/api)
+- API: [hackaform-api-svnd3.onrender.com/api](https://hackaform-api-svnd3.onrender.com/api)
 - Health check: [hackaform-api-svnd3.onrender.com/api/health](https://hackaform-api-svnd3.onrender.com/api/health)
 
-The repository includes a Render Blueprint that creates both the Flask web service and PostgreSQL database on explicit free plans, generates production secrets, applies Alembic migrations, and loads the repeatable demonstration data. Deploy it with:
+The repository includes a Render Blueprint that can reproduce both the Flask web service and PostgreSQL database on explicit free plans, generate production secrets, apply Alembic migrations, and load repeatable demonstration data. Deploy a new copy with:
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Svnd3/hackaform)
 
-Vercel proxies `/api/*` to the Render service, so the browser keeps a same-origin API URL and no public database credentials are exposed. After accepting the Blueprint, wait for both Render resources to become available and redeploy the latest `main` commit on Vercel if it has not already rebuilt automatically. A free Render service sleeps after 15 minutes without traffic, so its first request can take about a minute. Free Render PostgreSQL databases expire after 30 days and should be recreated or upgraded before a later showcase.
+Vercel proxies `/api/*` to the Render service, so the browser keeps a same-origin API URL and no public database credentials are exposed. After accepting the Blueprint, wait for both Render resources to become available and redeploy the latest `main` commit on Vercel if it has not already rebuilt automatically. A free Render service can sleep after inactivity, so its first request may take about a minute. Free-tier database retention can change; verify the current Render terms before a later showcase.
 
 ## Project structure
 
@@ -99,7 +100,7 @@ hackaform/
 │   ├── migrations/         Alembic schema history
 │   ├── tests/              API, model, auth, and ownership tests
 │   └── docker-compose.yml  PostgreSQL + Flask services
-├── docs/                   Pitch, ERD, and showcase guide
+├── docs/                   Phase 3 pitch, ERD, demo, reflection, and checklists
 └── .github/workflows/      Frontend and backend CI
 ```
 
@@ -177,7 +178,7 @@ After `flask --app run.py seed`:
 | Organizer | `organizer@hackaform.test` | `DemoPass123` |
 | Attendee | `attendee@hackaform.test` | `DemoPass123` |
 
-The deterministic seed creates two users, one published event, two agenda items, and one confirmed booking. Use `flask --app run.py seed --reset` to restore the demo state.
+The deterministic seed creates two users, one published event, two agenda items, and one confirmed booking. These public credentials are for demonstration only. Use a unique account for normal use, and never reuse the demo password elsewhere. Use `flask --app run.py seed --reset` only on disposable local data to restore the demo state.
 
 ## REST API
 
@@ -232,17 +233,11 @@ pytest --cov=app --cov-report=term-missing
 flask --app run.py db check
 ```
 
-Current verified result:
-
-- React: 13 test files, 37 tests; lint and production build pass.
-- Flask: 33 tests pass with 93% statement coverage; Ruff passes.
-- Alembic upgrade, schema-drift check, seed, and downgrade pass.
-
-GitHub Actions repeats the client and server checks on pushes and pull requests to `main`.
+The suites cover routing, authentication state, API normalization, controlled forms, CRUD flows, validation, expired and malformed tokens, cross-user access, capacity conflicts, and health behaviour. GitHub Actions repeats frontend lint/tests/build and backend Ruff/tests on pushes and pull requests to `main`. See the current workflow run for the authoritative test count and result.
 
 ## Design decisions
 
-- **Extend, do not restart:** the Phase 1 component system, routes, filters, accessibility work, and saved-event feature remain in use.
+- **Extend, do not restart:** the Phase 1 component system, routes, filters, accessibility work, and saved-event feature remain in use; Phase 2 supplied the API and database; Phase 3 hardens authentication and user ownership.
 - **Owned data first:** the custom API is the source of truth for events, agendas, users, capacity, and bookings.
 - **Three meaningful related resources:** Event, AgendaItem, and Booking each support complete CRUD.
 - **Server-side ownership:** hidden buttons are useful UX, but authorization is always enforced in Flask.
@@ -250,23 +245,24 @@ GitHub Actions repeats the client and server checks on pushes and pull requests 
 
 ## Challenges and known limitations
 
-- The Phase 1 external sources used different schemas; Phase 2 required a stable owned event contract while preserving the existing card and filter UI. A normalization boundary in `src/services/eventsApi.js` keeps components decoupled from transport details.
+- The Phase 1 external sources used different schemas; the full-stack extension required a stable owned event contract while preserving the existing card and filter UI. A normalization boundary in `src/services/eventsApi.js` keeps components decoupled from transport details.
 - Concurrent booking requests require more than a client-side counter, so capacity validation runs in Flask inside a locked transaction.
 - Date/time inputs are submitted as ISO 8601 values and stored in UTC while each event keeps its display timezone.
-- JWTs are stored in browser local storage for this classroom MVP. A production iteration should use short-lived tokens with secure refresh-token cookies and a revocation strategy.
+- JWTs expire after 12 hours and are stored in browser local storage for this classroom MVP. Signing out removes the local token, while Flask still validates every protected request. A higher-risk production deployment should use short-lived access tokens with secure, `HttpOnly` refresh-token cookies, rotation, and revocation.
 - The catalogue currently loads up to 60 events into client-side filters; server-driven pagination or infinite scrolling is the next scale improvement.
 - Hackaform does not yet process payments, send reminders, upload images, or provide waitlists.
 - No blocking bugs are known in the documented MVP.
 
 ## Documentation and presentation
 
-- [Phase 2 project pitch](docs/PHASE2_PITCH.md)
+- [Phase 3 project pitch](docs/PHASE3_PITCH.md)
 - [Entity relationship diagram](docs/ERD.md)
-- [Under-10-minute showcase guide](docs/PHASE2_DEMO.md)
-- [Written reflection](docs/PHASE2_REFLECTION.md)
-- [Peer-review template](docs/PEER_REVIEW_TEMPLATE.md)
-- [Submission checklist](docs/SUBMISSION_CHECKLIST.md)
+- [2:30 deployed live-demo guide](docs/PHASE3_DEMO.md)
+- [Phase 3 written reflection](docs/PHASE3_REFLECTION.md)
+- [Presentation index](docs/PRESENTATION.md)
+- [Phase 3 submission checklist](docs/PHASE3_SUBMISSION_CHECKLIST.md)
 - [Backend implementation notes](server/README.md)
+- [Earlier-phase archive](docs/PHASE2_PITCH.md)
 
 ## License
 

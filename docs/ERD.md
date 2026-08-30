@@ -1,6 +1,6 @@
-# Hackaform Phase 2 — Entity Relationship Diagram
+# Hackaform Phase 3 — Entity Relationship Diagram
 
-Hackaform extends the Phase 1 React discovery prototype with persistent, relational data. A user can organize events and attend other users' events. Every event can have an ordered agenda and many attendee bookings.
+Hackaform's final capstone data model combines persistent relational data with authenticated ownership. A user can organize events and attend other users' events. Every event can have an ordered agenda and many attendee bookings.
 
 ```mermaid
 erDiagram

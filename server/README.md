@@ -1,6 +1,6 @@
-# Hackaform API
+# Hackaform API — Phase 3
 
-Hackaform's Phase 2 backend replaces the Phase 1 public event feeds with an owned REST API. Organizers can manage events and schedules; attendees can reserve places and manage their personal event plan. PostgreSQL is the production database, while the automated tests use isolated SQLite databases.
+Hackaform's Flask API is the protected source of truth for the final capstone. It replaces the Phase 1 public feeds with owned data and completes the Phase 3 authentication and authorization layer. Organizers can manage their own events and agendas; attendees can reserve places and manage only their own bookings. PostgreSQL is the production database, while automated tests use isolated SQLite databases.
 
 ## Data model
 
@@ -43,7 +43,18 @@ erDiagram
     }
 ```
 
-`Event` and `AgendaItem` are related organizer-owned resources with full CRUD. `Booking` links users and events, adds another complete CRUD flow, prevents duplicate reservations, and checks capacity on the server. All write routes require a JWT. Event and agenda writes require event ownership; booking writes require booking ownership.
+`Event` and `AgendaItem` are related organizer-owned resources with full CRUD. `Booking` links users and events, adds another complete CRUD flow, prevents duplicate reservations, and checks capacity on the server. All write routes require a valid JWT. Event and agenda writes require event ownership; booking reads and writes require booking ownership. These checks run in Flask, so hiding a frontend control is never treated as authorization.
+
+## Authentication and authorization
+
+- `POST /api/auth/register` validates a unique normalized email, hashes the password, and returns the user plus a signed access token with HTTP `201`.
+- `POST /api/auth/login` verifies the password hash and returns a fresh access token with HTTP `200`.
+- `GET /api/auth/me` validates the token and restores the signed-in user.
+- Protected routes resolve the token identity to a real user before accessing owned records.
+- Missing, malformed, expired, or unknown-user tokens return structured errors rather than exposing data.
+- Cross-user event, agenda, booking, and attendee-roster operations are rejected by server-side ownership guards.
+
+Access tokens expire after 12 hours. The classroom client stores its token in local storage and removes it on sign-out. For a higher-risk public product, the next security iteration would add short-lived access tokens, refresh-token rotation in `HttpOnly` cookies, revocation, email verification, and authentication rate limiting.
 
 ## Local setup
 
@@ -140,8 +151,8 @@ The root `render.yaml` Blueprint provisions the API and PostgreSQL together on f
 
 The Blueprint generates `SECRET_KEY` and `JWT_SECRET_KEY`, obtains `DATABASE_URL` directly from the managed database, and restricts cross-origin browser requests to `https://hackaform-ten.vercel.app`. Never run the seed command with `--reset` during startup because that would erase user-created records.
 
-## Known limitations / Phase 3 opportunities
+## Known limitations / future production hardening
 
 - Access tokens expire after 12 hours; refresh-token rotation and revocation are future work.
 - Capacity is enforced server-side while locking the event row during PostgreSQL booking transactions. Multi-region deployments may additionally require a distributed reservation strategy.
-- Payments, reminders, waitlists, organizer roles, and email verification are intentionally outside the Phase 2 MVP.
+- Payments, reminders, waitlists, multi-user organizer teams, and email verification are intentionally outside the final capstone MVP.
