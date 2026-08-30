@@ -69,9 +69,15 @@ def test_non_owner_cannot_manage_agenda(client, organizer, attendee, create_even
         json={"title": "Unauthorized update"},
         headers=attendee["headers"],
     )
+    delete = client.delete(
+        f"/api/agenda-items/{item_id}",
+        headers=attendee["headers"],
+    )
 
     assert create.status_code == 403
     assert update.status_code == 403
+    assert delete.status_code == 403
+    assert delete.get_json()["error"]["code"] == "forbidden"
 
 
 def test_agenda_item_must_fit_inside_event(client, organizer, create_event):

@@ -83,14 +83,26 @@ def test_user_cannot_manage_someone_elses_booking(client, attendee, register, cr
     stranger = register(name="Wanjiku Kariuki", email="wanjiku@example.com").get_json()["data"]
     stranger_headers = {"Authorization": f"Bearer {stranger['accessToken']}"}
 
-    response = client.patch(
+    detail = client.get(
+        f"/api/bookings/{booking_id}",
+        headers=stranger_headers,
+    )
+    update = client.patch(
         f"/api/bookings/{booking_id}",
         json={"status": "cancelled"},
         headers=stranger_headers,
     )
+    delete = client.delete(
+        f"/api/bookings/{booking_id}",
+        headers=stranger_headers,
+    )
 
-    assert response.status_code == 403
-    assert response.get_json()["error"]["code"] == "forbidden"
+    assert detail.status_code == 403
+    assert update.status_code == 403
+    assert delete.status_code == 403
+    assert detail.get_json()["error"]["code"] == "forbidden"
+    assert update.get_json()["error"]["code"] == "forbidden"
+    assert delete.get_json()["error"]["code"] == "forbidden"
 
 
 def test_organizer_cannot_book_own_event(client, organizer, create_event):

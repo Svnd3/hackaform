@@ -38,7 +38,7 @@ def create_app(config: dict | None = None):
             {
                 "data": {
                     "name": "Hackaform API",
-                    "version": "2.0.0",
+                    "version": "3.0.0",
                     "health": "/api/health",
                 }
             }

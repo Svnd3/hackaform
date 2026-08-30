@@ -1,3 +1,7 @@
+from app.extensions import db
+from app.models import User
+
+
 def test_event_creation_requires_authentication(client, event_payload):
     response = client.post("/api/events", json=event_payload)
 
@@ -83,6 +87,18 @@ def test_drafts_are_private_but_visible_in_owner_dashboard(client, organizer, cr
     assert public_list.get_json()["meta"]["total"] == 0
     assert public_detail.status_code == 404
     assert mine.get_json()["data"][0]["status"] == "draft"
+
+
+def test_mine_rejects_token_for_deleted_account(client, app, organizer):
+    with app.app_context():
+        user = db.session.get(User, organizer["user"]["id"])
+        db.session.delete(user)
+        db.session.commit()
+
+    response = client.get("/api/events?mine=true", headers=organizer["headers"])
+
+    assert response.status_code == 401
+    assert response.get_json()["error"]["code"] == "invalid_token"
 
 
 def test_owner_can_delete_event(client, organizer, create_event):

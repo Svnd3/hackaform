@@ -124,7 +124,9 @@ def list_events():
     if mine:
         if identity is None:
             raise APIError("Authentication is required.", 401, "authentication_required")
-        statement = statement.where(Event.owner_id == current_user_id())
+        # Resolve the account as well as the token subject so a token belonging
+        # to a deleted account cannot be used to query private event data.
+        statement = statement.where(Event.owner_id == current_user().id)
     else:
         statement = statement.where(Event.status == "published")
 

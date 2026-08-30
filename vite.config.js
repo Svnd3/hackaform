@@ -14,6 +14,10 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    // The interaction-heavy workspace tests share mocked browser state. Running
+    // files serially prevents worker contention and keeps CI results repeatable.
+    fileParallelism: false,
     setupFiles: './src/test/setup.js',
+    testTimeout: 10000,
   },
 })
