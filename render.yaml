@@ -7,6 +7,7 @@ services:
     rootDir: server
     buildCommand: pip install -r requirements.txt
     startCommand: flask --app run.py db upgrade && flask --app run.py seed && exec gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 wsgi:app
+    autoDeployTrigger: checksPass
     healthCheckPath: /api/health
     envVars:
       - key: PYTHON_VERSION
