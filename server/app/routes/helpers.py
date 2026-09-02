@@ -3,7 +3,7 @@ from sqlalchemy import select
 
 from ..errors import APIError
 from ..extensions import db
-from ..models import AgendaItem, Booking, Event, User
+from ..models import AgendaItem, Booking, Event, EventCircle, User
 
 
 def current_user_id() -> int:
@@ -45,6 +45,12 @@ def booking_or_404(booking_id: int) -> Booking:
     if booking is None:
         raise APIError("Booking not found.", 404, "not_found")
     return booking
+
+
+def event_circle_or_404(event: Event) -> EventCircle:
+    if event.circle is None:
+        raise APIError("Event circle not found.", 404, "not_found")
+    return event.circle
 
 
 def require_event_owner(event: Event, user: User):

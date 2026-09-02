@@ -1,83 +1,66 @@
-# Hackaform Phase 3 — 2:30 Live Demo
+# Hackaform Phase 3 — Final Demo Recording
 
-This is the marking-ready demonstration requested in the Phase 2 presentation feedback: use the **deployed website**, share the **entire screen**, open **Inspect → Network → Fetch/XHR**, and prove that React is calling the deployed Flask API. The goal is not to tour every page; it is to prove authentication and user-owned CRUD clearly within 150 seconds.
+Beatrice's 1 September briefing requires a **deployed**, pre-recorded application demo with voice-over. Keep the recording between **60 and 90 seconds**, embed it on the Demo slide, and keep the full presentation under six minutes. She will test the deployed application while the video plays, so do not record localhost.
 
-## What to have ready
+## Prepare before recording
 
-- Open [hackaform-ten.vercel.app](https://hackaform-ten.vercel.app) in a private/incognito window and wake it up before presenting.
-- Confirm [the API health endpoint](https://hackaform-api-svnd3.onrender.com/api/health) returns a successful response.
-- Use a fresh disposable account or an account with no Nairobi Build Weekend booking. Never reuse a real password.
-- Open the Nairobi Build Weekend detail page in one tab.
-- Press `F12`, choose **Network**, select **Fetch/XHR**, clear the request list, and keep DevTools docked at the side.
-- Keep the browser at a readable zoom and close notifications and unrelated tabs.
-- Do one timed rehearsal. If the free API is asleep, wake it before your turn.
+- Wake [the Render API](https://hackaform-api-svnd3.onrender.com/api/health), then open [the deployed app](https://hackaform-ten.vercel.app) in an incognito window.
+- Confirm the health endpoint returns `200`, the latest deployment is live, and a new account can complete the flow.
+- Create a disposable attendee email and a real WhatsApp group invite for the organizer test. Never reuse a personal password.
+- Open Chrome **Inspect → Network → Fetch/XHR**, clear the list, and keep it narrow enough that the product remains readable.
+- Silence notifications, close unrelated tabs, use 100% browser zoom, and record the full browser window with microphone audio.
 
-## Exact 2:30 run-of-show and script
+## 80-second shot list and voice-over
 
-### 0:00–0:18 — Problem and product
+### 0:00–0:08 — Discover
 
-**Show:** Hackaform event page and the empty Network panel.
+**Show:** Home, then Explore; filter for a Nairobi hackathon.
 
-**Say:** “Hackaform helps people discover Kenyan and regional tech events, then keep bookings in one schedule. Organizers can publish events and programmes without managing attendance in separate spreadsheets.”
+**Say:** “Hackaform brings scattered Kenyan and regional tech events into one clear place to discover, plan, and attend.”
 
-### 0:18–0:43 — Authentication
+### 0:08–0:21 — Authenticate
 
-**Do:** Open **Create account**, enter a disposable name/email/password, submit, and point to `POST /api/auth/register` in Network.
+**Show:** Register a disposable user; briefly point to `POST /api/auth/register` → `201` in Network.
 
-**Say:** “This React form calls my deployed Flask API. Registration returns `201 Created`; Flask validates a unique email, hashes the password, creates the user in PostgreSQL, and returns a signed JWT. The app uses that token for protected requests.”
+**Say:** “A visitor can register securely. Flask validates the request, hashes the password, persists the user in PostgreSQL, and returns a signed JWT.”
 
-Do not open or read the token on screen. The Network row, method, URL, and status are sufficient evidence.
+### 0:21–0:35 — Create and read owned data
 
-### 0:43–1:15 — Create and read owned data
+**Show:** Open Nairobi Build Weekend, confirm one place, then open My schedule. Point to `POST /api/bookings` → `201` and `GET /api/bookings` → `200`.
 
-**Do:** Return to Nairobi Build Weekend, add an optional note, click **Confirm booking**, then open **My schedule**. Point to `POST /api/bookings` (`201`) and `GET /api/bookings` (`200`).
+**Say:** “Booking creates user-owned data, and My schedule reads only records belonging to the authenticated user.”
 
-**Say:** “Creating a booking returns `201`. My schedule then reads only the signed-in user's bookings with `200`. The user ID comes from the verified token; the browser cannot choose another owner.”
+### 0:35–0:48 — Unlock the attendee circle
 
-### 1:15–1:40 — Update owned data
+**Show:** Return to the event and reveal **Attendee circle**. If a real invite is configured, click Open attendee chat and return immediately.
 
-**Do:** On the booking card click **Edit**, change the note or quantity, and click **Save changes**. Point to `PATCH /api/bookings/{id}` (`200`).
+**Say:** “A confirmed booking unlocks the private attendee circle, so people can introduce themselves and form teams before the hackathon. The invite is never sent in public event data.”
 
-**Say:** “This PATCH updates my booking. Flask loads the record, checks that its `user_id` matches the authenticated identity, rechecks event capacity, and only then commits.”
+### 0:48–1:02 — Update and delete
 
-### 1:40–2:02 — Delete owned data
+**Show:** Edit the booking note or quantity, save, then cancel and confirm. Point to `PATCH` → `200` and `DELETE` → `204`.
 
-**Do:** Click **Cancel booking**, confirm, and point to `DELETE /api/bookings/{id}` (`204`).
+**Say:** “The attendee can update and delete their own booking. Cancelling also removes access to the private circle.”
 
-**Say:** “Delete returns `204 No Content`, and the UI removes the item. That completes create, read, update, and delete on a user-owned resource.”
+### 1:02–1:20 — Organizer workspace and close
 
-### 2:02–2:22 — Authorization and architecture
+**Show:** Use a prepared organizer session or a quick cut to the Organizer Studio, event editor, agenda, roster, and circle manager.
 
-**Show:** Keep the Network rows visible.
+**Say:** “Organizers manage only their own events, agendas, attendance, and circle settings. React runs on Vercel, Flask on Render, and PostgreSQL stores the relationships. Ownership is enforced in the API, where another user receives `403 Forbidden`.”
 
-**Say:** “Protected requests carry the JWT, but authorization is enforced in Flask—not by hidden buttons. A different user receives `403 Forbidden` when trying to change this booking, event, or agenda. The deployed path is React on Vercel, Flask on Render, and PostgreSQL.”
+## What the circle feature does—and does not do
 
-### 2:22–2:30 — Close
+Hackaform securely stores and releases the host's WhatsApp invite. The host creates the group in WhatsApp and pastes the invite into Hackaform. The **Download group cover** helper creates an event-branded image the host can set manually. WhatsApp has no supported public API for silently creating ordinary groups or setting their photos, so never claim those steps are automatic.
 
-**Say:** “So Hackaform proves secure authentication, relational user ownership, full RESTful CRUD, persistence, and a responsive user experience in one deployed flow.”
+## Recording checklist
 
-## Status-code cheat sheet
+- [ ] Deployed Vercel URL is visible; no localhost.
+- [ ] Voice-over is audible and the recording is 1:00–1:30.
+- [ ] Authentication is visible.
+- [ ] Booking `POST`, `GET`, `PATCH`, and `DELETE` are visible in Network.
+- [ ] Circle access is shown only after confirmation.
+- [ ] Organizer workspace appears briefly.
+- [ ] No JWT, database URL, private invite code, or personal password is zoomed into view.
+- [ ] The video is inserted on slide 5 and plays from the first click.
 
-| Status | Meaning in this demo |
-| --- | --- |
-| `200 OK` | Login/read/update succeeded |
-| `201 Created` | Account, event, agenda item, or booking was created |
-| `204 No Content` | Delete succeeded |
-| `400 Bad Request` | Validation failed |
-| `401 Unauthorized` | Token is missing, invalid, expired, or belongs to no current user |
-| `403 Forbidden` | Signed in, but not the owner of the requested record |
-| `404 Not Found` | Record does not exist or a private event is hidden from a non-owner |
-| `409 Conflict` | Duplicate booking, closed/full event, or another business-rule conflict |
-
-## If something goes wrong
-
-- **First request is slow:** say “The free Render service is waking,” then continue once the health endpoint responds.
-- **`409 duplicate_booking`:** use the existing booking for read/update/delete, or use a fresh account.
-- **No requests appear:** confirm **Fetch/XHR** is selected, recording is active, and the list is cleared rather than paused.
-- **`401`:** sign out and sign in again; the 12-hour token may have expired.
-- **Network failure:** show the app's error state, retry once, then explain the expected request. Keep screenshots or a short backup recording available.
-- **Time is running out:** skip the architecture sentence, not the create/update/delete evidence.
-
-## Optional ownership proof after the timed demo
-
-If the lecturer asks for stronger evidence, sign in as a second user and attempt a request against the first user's booking/event ID. Show the `403` response, then briefly open the matching ownership test. Do not edit a production token in front of the class or expose secrets.
+If Render is asleep, wake it at least five minutes before presenting. Keep a local copy of the MP4 and the PDF deck as backups.

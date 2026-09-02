@@ -12,6 +12,7 @@ import { Link, useParams } from 'react-router-dom'
 import BookingPanel from '../components/BookingPanel.jsx'
 import EventArtwork from '../components/EventArtwork.jsx'
 import EventAgenda from '../components/EventAgenda.jsx'
+import EventCirclePanel from '../components/EventCirclePanel.jsx'
 import EventGrid from '../components/EventGrid.jsx'
 import SaveButton from '../components/SaveButton.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
@@ -40,6 +41,7 @@ export default function EventDetailsPage() {
   const [result, setResult] = useState({ event: null, error: null, requestToken: null, status: 'loading' })
   const [copied, setCopied] = useState(false)
   const [requestKey, setRequestKey] = useState(0)
+  const [circleRefreshKey, setCircleRefreshKey] = useState(0)
   const catalog = useEventCatalog({ pageSize: 12 })
   const requestToken = `${eventId}:${requestKey}`
   const currentResult = result.requestToken === requestToken
@@ -151,6 +153,8 @@ export default function EventDetailsPage() {
 
           <EventAgenda items={event.agendaItems} />
 
+          <EventCirclePanel event={event} refreshKey={circleRefreshKey} />
+
           <section className="detail-organizer">
             <div className="detail-organizer__avatar"><UserRound aria-hidden="true" /></div>
             <div>
@@ -162,7 +166,7 @@ export default function EventDetailsPage() {
         </div>
 
         <aside className="detail-sidebar detail-sidebar--booking" aria-label="Event booking">
-          <BookingPanel event={event} />
+          <BookingPanel event={event} onBookingChange={() => setCircleRefreshKey((key) => key + 1)} />
           <div className="detail-secondary-actions">
             <SaveButton event={event} label />
             <button className="share-button" onClick={shareEvent} type="button">

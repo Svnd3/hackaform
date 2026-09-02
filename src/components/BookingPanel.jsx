@@ -11,7 +11,7 @@ import {
 import ConfirmAction from './ConfirmAction.jsx'
 import InlineNotice from './InlineNotice.jsx'
 
-export default function BookingPanel({ event }) {
+export default function BookingPanel({ event, onBookingChange = () => {} }) {
   const { authenticated, user } = useAuth()
   const location = useLocation()
   const [booking, setBooking] = useState(null)
@@ -62,6 +62,7 @@ export default function BookingPanel({ event }) {
       setEditing(false)
       setNotice(action === 'update' ? 'Your booking was updated.' : 'You have a place. See you there!')
       setStatus('ready')
+      onBookingChange(result)
     } catch (requestError) {
       setError(requestError)
       setStatus('error')
@@ -79,6 +80,7 @@ export default function BookingPanel({ event }) {
       setConfirming(false)
       setNotice('Your booking was cancelled.')
       setStatus('ready')
+      onBookingChange(null)
     } catch (requestError) {
       setError(requestError)
       setStatus('error')

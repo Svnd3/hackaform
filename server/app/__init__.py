@@ -3,7 +3,7 @@ from flask import Flask, jsonify
 from .config import Config
 from .errors import register_error_handlers, register_jwt_error_handlers
 from .extensions import cors, db, jwt, migrate
-from .routes import agenda_bp, auth_bp, bookings_bp, events_bp, health_bp
+from .routes import agenda_bp, auth_bp, bookings_bp, event_circles_bp, events_bp, health_bp
 from .seed import seed_command
 
 
@@ -28,6 +28,7 @@ def create_app(config: dict | None = None):
     app.register_blueprint(events_bp)
     app.register_blueprint(agenda_bp)
     app.register_blueprint(bookings_bp)
+    app.register_blueprint(event_circles_bp)
     app.cli.add_command(seed_command)
     register_error_handlers(app)
     register_jwt_error_handlers(jwt)
@@ -38,7 +39,7 @@ def create_app(config: dict | None = None):
             {
                 "data": {
                     "name": "Hackaform API",
-                    "version": "3.0.0",
+                    "version": "3.1.0",
                     "health": "/api/health",
                 }
             }

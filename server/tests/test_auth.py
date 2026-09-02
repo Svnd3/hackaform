@@ -3,7 +3,7 @@ def test_api_index_and_health_are_public(client):
     health = client.get("/api/health")
 
     assert index.status_code == 200
-    assert index.get_json()["data"]["version"] == "3.0.0"
+    assert index.get_json()["data"]["version"] == "3.1.0"
     assert health.get_json()["data"] == {"service": "hackaform-api", "status": "ok"}
 
 

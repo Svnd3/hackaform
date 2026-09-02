@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import AgendaManager from '../components/AgendaManager.jsx'
 import EventForm from '../components/EventForm.jsx'
+import EventCircleManager from '../components/EventCircleManager.jsx'
 import InlineNotice from '../components/InlineNotice.jsx'
 import { ErrorState } from '../components/StateViews.jsx'
 import { useAuth } from '../hooks/useAuth.js'
@@ -89,6 +90,7 @@ export default function EventFormPage() {
         {notice && <InlineNotice kind="success">{notice}</InlineNotice>}
         <EventForm error={error} event={event} key={event?.id ?? 'new'} onSubmit={save} submitting={status === 'saving'} />
         {editing && <AgendaManager eventId={eventId} timezone={event?.timezone} />}
+        {editing && event && <EventCircleManager event={event} />}
       </div>
     </div>
   )

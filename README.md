@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/Svnd3/hackaform/actions/workflows/ci.yml/badge.svg)](https://github.com/Svnd3/hackaform/actions/workflows/ci.yml)
 
-Hackaform is a deployment-ready full-stack event productivity platform for people who organize and attend hackathons, workshops, meetups, and community events. Visitors can discover opportunities, authenticated attendees can manage their own bookings, and organizers can publish events, build agendas, monitor capacity, and review attendance from one workspace.
+Hackaform is a deployment-ready full-stack event productivity platform for people who organize and attend hackathons, workshops, meetups, and community events. Visitors can discover opportunities, authenticated attendees can manage their own bookings, and organizers can publish events, build agendas, monitor capacity, review attendance, and open a private pre-event attendee circle from one workspace.
 
 Phase 3 completes the original React discovery prototype with secure authentication, authorization, and user-owned data. Hackaform's React client communicates with its own Flask REST API and PostgreSQL database; passwords are hashed, protected requests use JWTs, and Flask enforces ownership for every event, agenda, and booking mutation. Authentication was introduced early during Phase 2, so the final phase focuses on verifying, testing, documenting, and deploying that security boundary rather than rebuilding the product.
 
@@ -13,8 +13,9 @@ Useful Kenyan and East African events are often scattered across websites and gr
 1. Discover a relevant event.
 2. Review its programme and remaining capacity.
 3. Book one or more places.
-4. Manage the booking from a personal schedule.
-5. Create and operate an event from the organizer studio.
+4. Meet confirmed attendees in the host's private WhatsApp circle before arriving.
+5. Manage the booking from a personal schedule.
+6. Create and operate an event from the organizer studio.
 
 ## Phase 3 features
 
@@ -25,6 +26,7 @@ Useful Kenyan and East African events are often scattered across websites and gr
 - Register, sign in, and restore a session with a bearer JWT.
 - Create, read, update, and delete personal bookings.
 - Keep persistent bookings in **My schedule**.
+- Open an event's private attendee circle only while holding a confirmed booking.
 - Save a separate browser-local shortlist before deciding to book.
 
 ### Organizer experience
@@ -32,6 +34,7 @@ Useful Kenyan and East African events are often scattered across websites and gr
 - Create, read, update, publish, cancel, and delete owned events.
 - Create, read, update, reorder, and delete related agenda items.
 - Review attendee names, statuses, quantities, and confirmed capacity.
+- Create, update, or remove a WhatsApp attendee-circle invite and download a branded group cover.
 - Manage draft and cancelled listings privately.
 - Receive clear validation, authorization, conflict, loading, empty, and error feedback.
 
@@ -40,6 +43,7 @@ Useful Kenyan and East African events are often scattered across websites and gr
 - Passwords are hashed and never returned by the API.
 - Protected requests use `Authorization: Bearer <access_token>`.
 - The API, not only the UI, enforces event, agenda, and booking ownership.
+- Attendee-circle invite links are never included in public event JSON; Flask releases them only to the event owner or a confirmed attendee.
 - Anonymous visitors are redirected away from personal workspaces, and protected API routes reject missing, invalid, or expired tokens.
 - Database constraints prevent duplicate user/event bookings and invalid quantities.
 - PostgreSQL row locking and server-side checks protect event capacity.
@@ -62,8 +66,9 @@ The relational model is:
 - An **Event** contains many **AgendaItems**.
 - A **User** makes many **Bookings**.
 - A **Booking** belongs to one User and one Event.
+- An **EventCircle** belongs to exactly one Event and stores its private coordination invite.
 
-See the complete [ERD and integrity rules](docs/ERD.md), the [Phase 3 pitch](docs/PHASE3_PITCH.md), and the [2:30 live demo guide](docs/PHASE3_DEMO.md).
+See the complete [ERD and integrity rules](docs/ERD.md), the [Phase 3 pitch](docs/PHASE3_PITCH.md), and the [final presentation demo guide](docs/PHASE3_DEMO.md).
 
 ## Technology
 
@@ -94,7 +99,7 @@ hackaform/
 ├── src/                    React pages, components, state, and API services
 ├── server/
 │   ├── app/
-│   │   ├── models/         User, Event, AgendaItem, Booking
+│   │   ├── models/         User, Event, AgendaItem, Booking, EventCircle
 │   │   ├── routes/         Auth and REST blueprints
 │   │   └── seed.py         Repeatable demo data
 │   ├── migrations/         Alembic schema history
@@ -212,6 +217,9 @@ All responses use `{"data": ...}`; paginated event collections also include `met
 | `GET/POST` | `/api/bookings` | Authenticated | List personal bookings or create one |
 | `GET/PATCH/DELETE` | `/api/bookings/:id` | Booking owner | Read, update, or delete a booking |
 | `GET` | `/api/events/:id/bookings` | Event owner | Review an event's attendee roster |
+| `GET` | `/api/events/:id/circle` | Event owner / confirmed attendee | Read the private attendee circle |
+| `POST` | `/api/events/:id/circle` | Event owner | Create an attendee circle |
+| `PATCH/DELETE` | `/api/events/:id/circle` | Event owner | Update or remove an attendee circle |
 
 Event queries support `search`, `category`, `city`, `format`, `status`, `page`, and `perPage`.
 
@@ -239,9 +247,10 @@ The suites cover routing, authentication state, API normalization, controlled fo
 
 - **Extend, do not restart:** the Phase 1 component system, routes, filters, accessibility work, and saved-event feature remain in use; Phase 2 supplied the API and database; Phase 3 hardens authentication and user ownership.
 - **Owned data first:** the custom API is the source of truth for events, agendas, users, capacity, and bookings.
-- **Three meaningful related resources:** Event, AgendaItem, and Booking each support complete CRUD.
+- **Four meaningful related resources:** Event, AgendaItem, Booking, and EventCircle each support a complete lifecycle.
 - **Server-side ownership:** hidden buttons are useful UX, but authorization is always enforced in Flask.
-- **Focused MVP:** payments, email reminders, messaging, waitlists, calendar sync, and AI recommendations are deferred until the core workflows are dependable.
+- **Private connection, deliberate handoff:** Hackaform controls who may retrieve an attendee-circle invite; WhatsApp remains responsible for the group itself.
+- **Focused MVP:** payments, email reminders, waitlists, calendar sync, and AI recommendations are deferred until the core workflows are dependable.
 
 ## Challenges and known limitations
 
@@ -250,14 +259,16 @@ The suites cover routing, authentication state, API normalization, controlled fo
 - Date/time inputs are submitted as ISO 8601 values and stored in UTC while each event keeps its display timezone.
 - JWTs expire after 12 hours and are stored in browser local storage for this classroom MVP. Signing out removes the local token, while Flask still validates every protected request. A higher-risk production deployment should use short-lived access tokens with secure, `HttpOnly` refresh-token cookies, rotation, and revocation.
 - The catalogue currently loads up to 60 events into client-side filters; server-driven pagination or infinite scrolling is the next scale improvement.
-- Hackaform does not yet process payments, send reminders, upload images, or provide waitlists.
+- WhatsApp does not expose a supported public API for silently creating ordinary groups or setting their photos. The organizer creates the group in WhatsApp, pastes its invite into Hackaform, and can download a branded cover to set manually.
+- A WhatsApp invite is a shareable secret. Hackaform limits retrieval to confirmed attendees, but a member can still copy it; the organizer must revoke/reset the invite in WhatsApp if it escapes.
+- Hackaform does not yet process payments, send reminders, upload image files, or provide waitlists.
 - No blocking bugs are known in the documented MVP.
 
 ## Documentation and presentation
 
 - [Phase 3 project pitch](docs/PHASE3_PITCH.md)
 - [Entity relationship diagram](docs/ERD.md)
-- [2:30 deployed live-demo guide](docs/PHASE3_DEMO.md)
+- [Final deployed demo guide](docs/PHASE3_DEMO.md)
 - [Phase 3 written reflection](docs/PHASE3_REFLECTION.md)
 - [Presentation index](docs/PRESENTATION.md)
 - [Phase 3 submission checklist](docs/PHASE3_SUBMISSION_CHECKLIST.md)

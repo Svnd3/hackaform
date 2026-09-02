@@ -1,48 +1,41 @@
-# Hackaform Phase 3 — Presentation Index
+# Hackaform Phase 3 — Final Presentation
 
-Use the presentation that matches the assessment. Phase 3 has two different speaking moments: the **pitch** explains the plan, while the **final demo** proves the completed product. Do not present the old Phase 1 deck for either task.
+This is the final combined Phase 3 pitch and product showcase announced by Beatrice Wambui on 1 September 2026.
 
-## Phase 3 pitch
+## Required format
 
-**Purpose:** Explain how the existing Hackaform codebase will be completed with authentication, authorization, user-owned data, testing, and deployment readiness.
+- **When:** Thursday, 3 September 2026, during the 8:00 a.m.–12:00 noon session.
+- **Maximum:** six minutes total.
+- **Slides:** three to four minutes, concise and visually consistent with Hackaform.
+- **Demo:** a pre-recorded, voiced, 60–90 second walkthrough embedded in the deck.
+- **Product:** the deployed application, not localhost. The lecturer may test it while the demo plays.
+- **Access:** share the presentation through Google Slides with Anyone with the link (Viewer) or Moringa School viewers.
+- **Marking link:** provide `https://github.com/Svnd3/hackaform`; the repository README links the deployed site.
 
-**Recommended length:** 2:30 if the lecturer keeps the announced short format.
+## Eight-slide story
 
-**Source:** [PHASE3_PITCH.md](./PHASE3_PITCH.md)
+1. **Hackaform** — “Find the room. Meet the people.”
+2. **The problem** — discovery is fragmented, planning is manual, and attendees often arrive as strangers.
+3. **The solution** — one flow for discovery, booking, schedules, organizer operations, and a private pre-event circle.
+4. **Minimum viable product** — Explore, Event detail, Authentication, My schedule, and Organizer Studio; highlight secure ownership.
+5. **Demo** — play the 60–90 second recording from [PHASE3_DEMO.md](./PHASE3_DEMO.md).
+6. **Technology and architecture** — React/Vercel → Flask/JWT/Render → PostgreSQL; tests and CI underneath.
+7. **Three future plans** — waitlists and reminders; payments with QR check-in; smarter attendee matching.
+8. **Thank you / questions** — live app and repository URLs.
 
-Suggested four-slide story:
+## Main differentiator
 
-1. **The coordination problem** — scattered events waste attendee and organizer time.
-2. **The secure product** — public discovery; authenticated personal bookings; owner-only events and agendas.
-3. **How access works** — React → JWT → Flask ownership guard → PostgreSQL; non-owner → `403`.
-4. **Two-week delivery** — audit, harden, test with two users, critique/iterate, deploy, document.
+Hackaform does more than publish an event directory. A confirmed booking becomes a trusted access gate for an event's attendee circle. This helps participants introduce themselves, form teams, and coordinate before they enter the room. The host creates the WhatsApp group and pastes its invite; Hackaform keeps the invite out of public JSON and releases it only to the owner or confirmed attendees.
 
-The honest Phase 3 framing is: authentication was introduced early in Phase 2, and the final phase verifies and hardens it. Do not claim that a finished feature is still only planned, and do not imply that React controls authorization.
+Be precise: WhatsApp does not provide a supported public API for silently creating normal groups or setting their photos. Hackaform supplies a downloadable branded group cover, but the host applies it manually in WhatsApp.
 
-## Final live demonstration
+## Evidence to mention
 
-**Purpose:** Prove the rubric from the deployed UI.
+- Registration/login and JWT-backed session restoration.
+- User-owned Booking CRUD: `POST 201`, `GET 200`, `PATCH 200`, `DELETE 204`.
+- Event, AgendaItem, Booking, and EventCircle relationships in PostgreSQL.
+- Server-side `403 Forbidden` for another user's record.
+- Protected circle read for owner/confirmed attendee; cancelled or unbooked users receive `403`.
+- Automated frontend/backend tests, linting, build, migration check, and GitHub Actions.
 
-**Length:** 2:30 unless the lecturer announces otherwise.
-
-**Source:** [PHASE3_DEMO.md](./PHASE3_DEMO.md)
-
-The essential evidence is:
-
-1. Create an account: `POST /api/auth/register` → `201`.
-2. Create a personal booking: `POST /api/bookings` → `201`.
-3. Read it in My schedule: `GET /api/bookings` → `200`.
-4. Edit it: `PATCH /api/bookings/{id}` → `200`.
-5. Delete it: `DELETE /api/bookings/{id}` → `204`.
-6. Explain that server-side ownership rejects a different user with `403`.
-
-Share the entire screen and keep **Inspect → Network → Fetch/XHR** visible. Use the UI for every normal action; the Network panel is evidence that the deployed React client is calling the Flask API. Never expose production secrets, a database URL, or a reusable token.
-
-## Supporting material
-
-- [Phase 3 written reflection](./PHASE3_REFLECTION.md)
-- [Phase 3 submission checklist](./PHASE3_SUBMISSION_CHECKLIST.md)
-- [Entity relationship diagram](./ERD.md)
-- [Backend contract and security notes](../server/README.md)
-
-Earlier Phase 1 and Phase 2 files remain in `docs/` as project-history evidence. They are archived context, not the current Phase 3 script.
+Earlier Phase 1 and Phase 2 files remain project-history evidence. Do not present those old decks on Thursday.

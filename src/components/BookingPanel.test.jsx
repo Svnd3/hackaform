@@ -38,6 +38,7 @@ describe('BookingPanel', () => {
 
   it('creates a booking with the selected quantity and organizer note', async () => {
     const user = userEvent.setup()
+    const onBookingChange = vi.fn()
     fetchBookings.mockResolvedValue([])
     createBooking.mockResolvedValue({
       eventId: 42,
@@ -46,7 +47,11 @@ describe('BookingPanel', () => {
       quantity: 2,
       status: 'confirmed',
     })
-    renderPanel()
+    render(
+      <MemoryRouter initialEntries={['/events/42']}>
+        <BookingPanel event={event} onBookingChange={onBookingChange} />
+      </MemoryRouter>,
+    )
 
     expect(await screen.findByRole('heading', { name: /claim your spot/i })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /add one place/i }))
@@ -61,6 +66,7 @@ describe('BookingPanel', () => {
     expect(await screen.findByRole('heading', { name: /you.re on the list/i })).toBeInTheDocument()
     expect(screen.getByText(/2 places reserved under Amina/i)).toBeInTheDocument()
     expect(screen.getByText(/you have a place/i)).toBeInTheDocument()
+    expect(onBookingChange).toHaveBeenCalledWith(expect.objectContaining({ id: 81 }))
   })
 
   it('updates and then cancels an existing booking through confirmation', async () => {

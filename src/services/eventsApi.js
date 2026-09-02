@@ -108,6 +108,7 @@ export function normalizeEvent(resource) {
     endAt,
     endsAt: endAt,
     format: format || (online ? 'online' : 'in-person'),
+    hasCircle: asBoolean(value(resource, 'hasCircle', 'has_circle')),
     id,
     imageUrl: value(resource, 'imageUrl', 'image_url'),
     isFree: resource.isFree ?? price === 0,

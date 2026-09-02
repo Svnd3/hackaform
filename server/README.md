@@ -1,6 +1,6 @@
 # Hackaform API — Phase 3
 
-Hackaform's Flask API is the protected source of truth for the final capstone. It replaces the Phase 1 public feeds with owned data and completes the Phase 3 authentication and authorization layer. Organizers can manage their own events and agendas; attendees can reserve places and manage only their own bookings. PostgreSQL is the production database, while automated tests use isolated SQLite databases.
+Hackaform's Flask API is the protected source of truth for the final capstone. It replaces the Phase 1 public feeds with owned data and completes the Phase 3 authentication and authorization layer. Organizers can manage their own events, agendas, and private attendee circles; attendees can reserve places, manage only their own bookings, and retrieve a circle invite only after confirmation. PostgreSQL is the production database, while automated tests use isolated SQLite databases.
 
 ## Data model
 
@@ -10,6 +10,7 @@ erDiagram
     USER ||--o{ BOOKING : makes
     EVENT ||--o{ AGENDA_ITEM : contains
     EVENT ||--o{ BOOKING : receives
+    EVENT ||--o| EVENT_CIRCLE : opens
 
     USER {
         int id PK
@@ -41,9 +42,16 @@ erDiagram
         int quantity
         string status
     }
+    EVENT_CIRCLE {
+        int id PK
+        int event_id FK
+        string platform
+        string invite_url
+        text welcome_message
+    }
 ```
 
-`Event` and `AgendaItem` are related organizer-owned resources with full CRUD. `Booking` links users and events, adds another complete CRUD flow, prevents duplicate reservations, and checks capacity on the server. All write routes require a valid JWT. Event and agenda writes require event ownership; booking reads and writes require booking ownership. These checks run in Flask, so hiding a frontend control is never treated as authorization.
+`Event` and `AgendaItem` are related organizer-owned resources with full CRUD. `Booking` links users and events, adds another complete CRUD flow, prevents duplicate reservations, and checks capacity on the server. `EventCircle` is a one-to-one child of Event: the organizer controls it, while only the organizer and confirmed attendees can read its private invite. All writes require a valid JWT. These checks run in Flask, so hiding a frontend control is never treated as authorization.
 
 ## Authentication and authorization
 
@@ -53,6 +61,7 @@ erDiagram
 - Protected routes resolve the token identity to a real user before accessing owned records.
 - Missing, malformed, expired, or unknown-user tokens return structured errors rather than exposing data.
 - Cross-user event, agenda, booking, and attendee-roster operations are rejected by server-side ownership guards.
+- Circle invite URLs never appear in public event JSON and are returned only after an owner/confirmed-attendee authorization check.
 
 Access tokens expire after 12 hours. The classroom client stores its token in local storage and removes it on sign-out. For a higher-risk public product, the next security iteration would add short-lived access tokens, refresh-token rotation in `HttpOnly` cookies, revocation, email verification, and authentication rate limiting.
 
@@ -117,10 +126,16 @@ All endpoints are prefixed with `/api`. Protected requests use `Authorization: B
 | PATCH | `/api/bookings/:id` | Booking owner | Change quantity, notes, or status |
 | DELETE | `/api/bookings/:id` | Booking owner | Permanently remove booking |
 | GET | `/api/events/:id/bookings` | Event owner | View attendee roster |
+| GET | `/api/events/:id/circle` | Event owner / confirmed attendee | Read the private attendee circle |
+| POST | `/api/events/:id/circle` | Event owner | Create the event's attendee circle |
+| PATCH | `/api/events/:id/circle` | Event owner | Update the invite or welcome message |
+| DELETE | `/api/events/:id/circle` | Event owner | Remove the attendee circle |
 
 `GET /api/events` supports `search`, `category`, `city`, `format`, `page`, and `perPage`. Authenticated organizers can use `mine=true&status=draft` to retrieve their private events.
 
 Event JSON uses `ownerId`, `startAt`, `endAt`, `bookedSpots`, `availableSpots`, `imageUrl`, `createdAt`, `updatedAt`, and `agendaItems`. Booking requests use `eventId`; agenda requests use `startsAt` and `endsAt`.
+
+Event-circle requests use `inviteUrl` and optional `welcomeMessage`. The invite must be an HTTPS URL on the exact `chat.whatsapp.com` host. Hackaform cannot create a consumer WhatsApp group or set its photo through a supported public API; the organizer creates the group in WhatsApp, pastes its invite, and can use the client-generated cover as a manual setup aid.
 
 Dates must be ISO 8601 strings with an offset, such as `2030-03-13T09:00:00+03:00`. They are stored and returned in UTC. Event formats are `in_person`, `online`, or `hybrid`; event statuses are `draft`, `published`, or `cancelled`; booking statuses are `confirmed` or `cancelled`.
 
@@ -155,4 +170,5 @@ The Blueprint generates `SECRET_KEY` and `JWT_SECRET_KEY`, obtains `DATABASE_URL
 
 - Access tokens expire after 12 hours; refresh-token rotation and revocation are future work.
 - Capacity is enforced server-side while locking the event row during PostgreSQL booking transactions. Multi-region deployments may additionally require a distributed reservation strategy.
+- A group invite can be copied by an authorized member. If it is shared outside the event, the organizer must revoke/reset it in WhatsApp and update Hackaform.
 - Payments, reminders, waitlists, multi-user organizer teams, and email verification are intentionally outside the final capstone MVP.

@@ -41,6 +41,13 @@ class Event(TimestampMixin, db.Model):
     bookings = db.relationship(
         "Booking", back_populates="event", cascade="all, delete-orphan", passive_deletes=True
     )
+    circle = db.relationship(
+        "EventCircle",
+        back_populates="event",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+    )
 
     @property
     def booked_spots(self) -> int:
@@ -71,6 +78,7 @@ class Event(TimestampMixin, db.Model):
             "availableSpots": max(self.capacity - booked_spots, 0),
             "status": self.status,
             "imageUrl": self.image_url,
+            "hasCircle": self.circle is not None,
             "createdAt": isoformat(self.created_at),
             "updatedAt": isoformat(self.updated_at),
         }

@@ -28,11 +28,13 @@ The Canvas field says **website URL**, but the written instruction specifically 
 
 ## Part 4 — Showcase / discussion
 
-- [ ] Use the deployed app and share the entire screen.
-- [ ] Open **Inspect → Network → Fetch/XHR** and show actual deployed API requests.
-- [ ] Demonstrate auth plus user-owned Booking CRUD: `POST 201`, `GET 200`, `PATCH 200`, `DELETE 204`.
+- [ ] Present the final Hackaform slide deck for 3–4 minutes; keep the whole presentation under six minutes.
+- [ ] Embed a voiced, pre-recorded 60–90 second walkthrough on the Demo slide using [PHASE3_DEMO.md](./PHASE3_DEMO.md).
+- [ ] Use the deployed app and show auth, Booking CRUD, the private attendee circle, and the organizer workspace.
+- [ ] Keep **Inspect → Network → Fetch/XHR** visible enough to show `POST 201`, `GET 200`, `PATCH 200`, and `DELETE 204`.
 - [ ] Explain that a different authenticated user receives `403`; show the negative test or response if asked.
-- [ ] Keep the live demo to 2:30 using [PHASE3_DEMO.md](./PHASE3_DEMO.md), unless the lecturer announces a different limit.
+- [ ] Upload the PPTX to Google Slides and set it to Anyone with the link (Viewer) or Moringa School viewers.
+- [ ] Provide the public slide link and `https://github.com/Svnd3/hackaform` during Thursday's session.
 - [ ] Upload/share the recording, visual aid, and written reflection only where the showcase prompt requests them.
 - [ ] Give one peer specific, evidence-based feedback if peer response is required.
 
@@ -45,6 +47,7 @@ The Canvas field says **website URL**, but the written instruction specifically 
 - [ ] Latest GitHub Actions run on `main` is green.
 - [ ] `https://hackaform-api-svnd3.onrender.com/api/health` is healthy.
 - [ ] A fresh account can register, book, edit, and delete through the live Vercel app.
+- [ ] An organizer can save a real `chat.whatsapp.com` invite; a confirmed attendee can open it; an unbooked/cancelled user cannot.
 - [ ] Protected pages redirect signed-out users, expired tokens fail safely, and ownership is enforced in Flask.
 - [ ] Free services are awake before the presentation, notifications are silenced, and a backup PDF/screenshot is ready.
 
@@ -53,7 +56,7 @@ The Canvas field says **website URL**, but the written instruction specifically 
 | Criterion | Evidence |
 | --- | --- |
 | Alignment with brief | Phase 3 pitch, focused MVP, and deployed end-to-end workflow |
-| Functionality and auth | Register/login/me, protected routes, user-owned CRUD, cross-user rejection |
+| Functionality and auth | Register/login/me, protected routes, user-owned CRUD, private attendee-circle access, cross-user rejection |
 | Code quality | React services/components, Flask blueprints/models, consistent errors, automated checks |
 | User experience | Responsive UI, clear login state, controlled forms, loading/empty/error/success feedback |
 | Documentation | Main/server READMEs, ERD, endpoints, setup, deployment, demo, reflection, and clean history |

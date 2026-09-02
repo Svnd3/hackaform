@@ -5,7 +5,7 @@ from flask.cli import with_appcontext
 from sqlalchemy import delete, select
 
 from .extensions import db
-from .models import AgendaItem, Booking, Event, User
+from .models import AgendaItem, Booking, Event, EventCircle, User
 
 
 @click.command("seed")
@@ -14,7 +14,7 @@ from .models import AgendaItem, Booking, Event, User
 def seed_command(reset):
     """Load deterministic demo accounts, events, agendas, and a booking."""
     if reset:
-        for model in (Booking, AgendaItem, Event, User):
+        for model in (EventCircle, Booking, AgendaItem, Event, User):
             db.session.execute(delete(model))
         db.session.commit()
     if db.session.scalar(select(User).limit(1)):
