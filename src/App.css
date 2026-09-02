@@ -223,15 +223,10 @@
   margin: 0;
 }
 
-.footer-made,
 .footer-github {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-.footer-made svg {
-  color: var(--orange);
 }
 
 .footer-github:hover {
@@ -1933,7 +1928,6 @@
   .site-footer { padding-top: 60px; }
   .footer-top { grid-template-columns: 1fr; gap: 50px; padding-bottom: 50px; }
   .footer-bottom { align-items: flex-start; flex-direction: column; }
-  .footer-made { display: none; }
   .home-hero__grid { padding-top: 62px; padding-bottom: 100px; }
   .home-hero h1 { font-size: clamp(3.1rem, 15vw, 5rem); }
   .home-hero__lede { font-size: 0.94rem; }

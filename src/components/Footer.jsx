@@ -1,4 +1,4 @@
-import { ArrowUpRight, GitBranch, Heart } from 'lucide-react'
+import { ArrowUpRight, GitBranch } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Brand from './Brand.jsx'
 
@@ -36,9 +36,6 @@ export default function Footer() {
 
       <div className="container footer-bottom">
         <p>© {new Date().getFullYear()} Hackaform. Built for curious people.</p>
-        <p className="footer-made">
-          Made with <Heart size={14} fill="currentColor" aria-label="care" /> in Nairobi
-        </p>
         <a className="footer-github" href="https://github.com/Svnd3/hackaform" rel="noreferrer" target="_blank">
           <GitBranch size={16} aria-hidden="true" /> Source code
         </a>

@@ -123,7 +123,7 @@ export default function EventCircleManager({ event }) {
         <div className="circle-setup-card">
           <div className="circle-setup-card__topline">
             <span>{circle ? 'Circle live' : 'Three-step setup'}</span>
-            {circle && <strong><span aria-hidden="true" /> Confirmed guests only</strong>}
+            {circle && <strong>Confirmed guests only</strong>}
           </div>
           <ol className="circle-steps">
             <li><span>01</span><div><strong>Create the group in WhatsApp</strong><p>WhatsApp keeps group ownership and moderation in your hands.</p></div></li>

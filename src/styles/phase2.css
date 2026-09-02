@@ -1926,8 +1926,7 @@
   text-transform: uppercase;
 }
 
-.circle-setup-card__topline strong { display: inline-flex; align-items: center; gap: 7px; color: var(--acid); font-size: 0.61rem; }
-.circle-setup-card__topline strong > span { width: 7px; height: 7px; background: var(--acid); border-radius: 50%; box-shadow: 0 0 0 4px rgba(221, 255, 85, 0.12); }
+.circle-setup-card__topline strong { color: var(--acid); font-size: 0.61rem; }
 
 .circle-steps {
   display: grid;
