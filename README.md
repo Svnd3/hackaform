@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/Svnd3/hackaform/actions/workflows/ci.yml/badge.svg)](https://github.com/Svnd3/hackaform/actions/workflows/ci.yml)
 
-Hackaform is a deployment-ready full-stack event productivity platform for people who organize and attend hackathons, workshops, meetups, and community events. Visitors can discover opportunities, authenticated attendees can manage their own bookings, and organizers can publish events, build agendas, monitor capacity, review attendance, and open a private pre-event attendee circle from one workspace.
+Hackaform is a deployment-ready full-stack event productivity platform for people who organize and attend hackathons, workshops, meetups, and community events. Visitors can be able to discover opportunities, authenticated attendees can manage their own bookings, and organizers can publish events, build agendas, monitor capacity, review attendance, and open a private pre-event attendee circle from one workspace.
 
 Phase 3 completes the original React discovery prototype with secure authentication, authorization, and user-owned data. Hackaform's React client communicates with its own Flask REST API and PostgreSQL database; passwords are hashed, protected requests use JWTs, and Flask enforces ownership for every event, agenda, and booking mutation. Authentication was introduced early during Phase 2, so the final phase focuses on verifying, testing, documenting, and deploying that security boundary rather than rebuilding the product.
 
@@ -268,4 +268,4 @@ The suites cover routing, authentication state, API normalization, controlled fo
 
 ## License
 
-This student capstone is provided for educational use. Event and account data in the seed are fictional.
+This student capstone is provided for educational use.  
