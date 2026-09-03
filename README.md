@@ -264,16 +264,7 @@ The suites cover routing, authentication state, API normalization, controlled fo
 - Hackaform does not yet process payments, send reminders, upload image files, or provide waitlists.
 - No blocking bugs are known in the documented MVP.
 
-## Documentation and presentation
 
-- [Phase 3 project pitch](docs/PHASE3_PITCH.md)
-- [Entity relationship diagram](docs/ERD.md)
-- [Final deployed demo guide](docs/PHASE3_DEMO.md)
-- [Phase 3 written reflection](docs/PHASE3_REFLECTION.md)
-- [Presentation index](docs/PRESENTATION.md)
-- [Phase 3 submission checklist](docs/PHASE3_SUBMISSION_CHECKLIST.md)
-- [Backend implementation notes](server/README.md)
-- [Earlier-phase archive](docs/PHASE2_PITCH.md)
 
 ## License
 
